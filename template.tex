@@ -7,6 +7,7 @@
 \usepackage{pdflscape} 
 \usepackage{geometry}
 \usepackage{longtable}
+\usepackage{gensymb}
 
 % Uses the newer biblatex (with biber as backend) for citations and
 % references. Can deal with non-ascii letters in author names.
@@ -70,7 +71,7 @@
 \usepackage[parfill]{parskip} 
 
 % User supplied information that appears on title page. Do edit these!
-\title{ Project Specification and Planning}
+\title{ Shoulder Surfing Detection}
 \author{Katie Peacey}
 \studentid{2214646}
 \project{Shoulder Surfing Detector}
@@ -353,6 +354,105 @@ User data privacy concerns. &
 A review of past literature has been completed, highlighting the gaps for future work which this project will start to explore. There is a need for user-centered design within shoulder surfing detection so a object detection algorithm will be imported. This algorithm has been identified and researched to ensure it will meet the needs of the project.
 
 A project methodology has been evaluated to ensure the project stays on track, and risks have been identified with mitigation techniques. A Gantt chart will be followed which includes key milestones for the software product. Having project aims and objectives will allow for extensive summative evaluation at the end of the project.
+
+
+\section{Finding an appropriate algorithm}  
+\label{sec:algorithm} 
+
+It is important to find a machine learning algorithm that can effectively identify a person causing potential threat as accurately as possible.
+During the initial planning of this project, a object detection algorithm called YOLO \textcolor{red}{ref here} was identified as a possible solution. 
+YOLO (You Only Look Once) is an object detection algorithm produced in 2015 by Redmon et al. which uses bounding boxes to predict the probability of what each object is \cite{redmon_you_2016}. The algorithm has been trained using the ImageNet dataset \cite{noauthor_imagenet_nodate} and can detect from traffic lights to toilets. For this project, the focus will be on detecting people. The YOLO model splits each image into a grid and produces bounding boxes for each cell, a class probability is listed, and a confidence score is calculated. The class probability is the likelihood that each object belongs to each class (e.g. bottle, person, chair) and the confidence is the likelihood that there is an object in that cell \cite{redmon_you_2016}. An overall confidence score can then be calculated and produced to the user using the formula: 
+\[
+  Confidence = Object Confidence Score \times Class Probability
+\]
+The confidence will then be listed between 1 and 0, 0 being no object found.
+
+The algorithm was imported into Python and connected to the device’s camera. YOLO processes images at 45 frames per second \cite{redmon_you_2016} meaning a passer-by should be detected in the time they walk past the screen. Figure~\ref{fig:figure1} shows the code being run on an Apple MacBook (720p FaceTime HD camera) to demonstrate its ability to detect more than one person at different distances and angles.
+
+Images 1 and 2 demonstrate how more than one person can be identified at once – something that will need to happen for the detection. Facial features do not need to be present to be identified correctly. Image 3 shows the main user with the onlooker stood approximately 6 meters behind. This resulted in an average confidence score of 0.95 meaning it was a strong identification.
+
+\begin{figure}[ht]
+
+\centering
+\includegraphics[width=.3\textwidth]{img/fig1-img1.png}\hfill
+\includegraphics[width=.3\textwidth]{img/fig1-img2.png}\hfill
+\includegraphics[width=.3\textwidth]{img/fig1-img3.png}\hfill
+
+\caption{YOLO being used to detect more than one person in-front of the camera. The observer stands at different distances and angles to test the system.}
+\label{fig:figure1}
+\end{figure}
+
+An experiment was carried out to test the limitations that using a front facing camera may have. The user stood 1 meter away from the camera, facing directly in the centre of the screen. They then slowly stepped to the left, decreasing the angle that they were to the screen, ensuring that they maintained a 1-meter distance at all times. As a result, the user was still visible and identifiable by the model until they were at a 35-degree angle to the screen. Figure~\ref{fig:figure2} shows the user where they could first not be identified.
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=70mm]{img/not_seen.jpg}
+  \caption{The angle at which the YOLO model could no longer identify the user. }
+  \label{fig:figure2}
+\end{figure}
+
+The experiment highlighted the limitations that the YOLO algorithm and camera may have. The user reported that they could still see what was on the screen meaning shoulder surfing could still take place. 
+User studies will be carried out during the project to identify if it would be more beneficial to use a fish-eye camera which has a wider-angle view. It will be recorded if the user finds using an external device more cumbersome and if it benefits the results.
+
+
+It was important to review other detection methods. An eye tracking system was imported from GitHub called GazeTracking (written by Antoine Lame). \textcolor{red}{https://github.com/antoinela me/GazeTracking}.
+
+
+\textcolor{blue}{The software is free of use, so I have permission to use this. I need to check the permissions of YOLO, but I believe this is the same case.}
+
+\textcolor{blue}{Perhaps I should do some more research about other algorithms and talk about them and justify my choice to compare only these two? }
+
+\textcolor{blue}{The compare the two algorithms, it will be down to the most tests passed. Both have their advantages and disadvantages so there should be discussed.}
+
+\subsubsection{Planning tests}
+I want to test the following:
+\begin{itemize}
+    \item The distance at which a person can be identified from.
+    \item The number of users that can be identified at once.
+    \item The angles to the screen in which the user can still be identified.
+\end{itemize}
+In order to ensure the tests remain fair, the same devices, environment and users will be used for both. The same tests should be carried out to enable a fair comparison to be made.
+
+Setting the scene -> We will have user1 (the authorised user) and user2 (unauthorised user). A \textcolor{red}{mac camera} will be used for testing purposes but the final product should be tested with various camera hardware. These initial tests should be carried out in the same location in a relatively well lit room. The device should be placed in the same location on a table/flat surface to ensure of a fair test. When distances of the user to the screen are tested, the distance should be precisely tested.
+
+The following 14 tests have been made. 
+\begin{enumerate}
+    \item User 1 not present. User 2 stands parallel with screen at a \textbf{5 meter distance}. Can User 2 be identified as present?
+    \item User 1 not present. User 2 stands parallel with screen at a \textbf{3 meter distance}. Can User 2 be identified as present?
+    \item User 1 not present. User 2 stands parallel with screen at a \textbf{2 meter distance}. Can User 2 be identified as present?
+    \item User 1 not present. User 2 stands parallel with screen at a \textbf{1 meter distance}. Can User 2 be identified as present?
+    \item User 1 sits in-front of screen (to simulate the device being used). User 2 stands \textbf{directly behind} User 1. Can both User 1 and User 2 be detected by the algorithm?
+    \item User 1 sits in-front of screen. User 2 stands parallel with screen at a \textbf{5 meter distance}. Can User 1 and User 2 be identified as present?
+    \item User 1 sits in-front of screen. User 2 stands parallel with screen at a \textbf{3 meter distance}. Can User 1 and User 2 be identified as present?
+    \item User 1 sits in-front of screen. User 2 stands parallel with screen at a \textbf{2 meter distance}. Can User 1 and User 2 be identified as present?
+    \item User 1 sits in-front of screen. User 2 stands parallel with screen at a \textbf{1 meter distance}. Can User 1 and User 2 be identified as present?
+    \item User 1 sits in-front of screen. Can User 2 be identified from a \textbf{distance further than 5 meters} away from the screen?
+    \item User 1 sits in-front of screen. User 2 stands at a 0\degree angle to the screen with a 1-meter distance. Can User 2 be identified?
+    \item User 1 sits in-front of screen. User 2 stands at a 45\degree angle to the screen with a 1-meter distance. Can User 2 be identified?
+    \item User 1 sits in-front of screen. User 2 stands at a 135\degree angle to the screen with a 1-meter distance. Can User 2 be identified?
+    \item User 1 sits in-front of screen. Whilst maintaining a 1-meter distance to the screen, User 2 walks past the device whilst attempting to view what is on screen as much as possible. Can User 2 be identified throughout?
+\end{enumerate}
+
+As you can see, tests 1-5 tests distances with just one user. This is important to test \textcolor{blue}{because...}.
+Tests 6-10 introduces another user. This is to replicate the idea of there being one person using the device with another attempting to shoulder surf.
+Tests 11-13 checks the ability of the camera and algorithm to identify users stood at various angles to the camera.
+The purpose of test 14 is to simulate a user attempting to view what is on screen whilst passing by. Whilst this may not be done maliciously, it is important the algorithm can track people walking past so that it can be developed further to detect shoulder surfing.
+
+A successful test suite would mean that all the tests pass except from test 11 when using the \textcolor{red}{mac camera with spec x,y, z}. \textcolor{blue}{Test 11 should fail because it's a front facing camera}.
+
+\textcolor{red}{Check tenses here please.}
+
+\subsubsection{Carrying out tests}
+
+Set up in a room with good lighting. MacBook was used and stayed in the same location throughout. A tape measure was used to check the distances. The same two users were used throughout.
+
+Put some images here. 
+
+\subsubsection{Evaluating tests}
+
+So, after testing, we know that the person detection is a lot better. One issue I found is that it was quite laggy, as there's so much computation. We have a constant accuracy percentage being outputted – perhaps reduce this. It’s also trying to detect other things other than people; can we get rid of this. This would definitely speed up the algorithm.
+
+Unfortunately I didn't do all of the tests for the GazeTracking algorithm. Was this a good idea? For the next testing stage, I want to ensure I produce more tests. No point doing tests 6-14 as two users were used but the algorithm could identify only one. I did check if the use of glasses was effecting it, but they weren't.
+
 
 % Prints the Reference section
 \printbibliography
