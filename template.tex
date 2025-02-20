@@ -8,7 +8,20 @@
 \usepackage{geometry}
 \usepackage{longtable}
 \usepackage{gensymb}
-
+\usepackage{listings}
+\lstset{
+  tabsize=2,
+  breaklines=true,
+  captionpos=b,
+  extendedchars=true,
+  numbers=left,
+  basicstyle=\ttfamily,
+  commentstyle=\color{red!70!black},
+  keywordstyle=\color{green!70!black},
+  numberstyle=\tiny\color{black!50},
+  stringstyle=\ttfamily\color{blue!50!black},
+  backgroundcolor=\color{yellow!10}
+}
 % Uses the newer biblatex (with biber as backend) for citations and
 % references. Can deal with non-ascii letters in author names.
 \usepackage{biblatex}
@@ -470,6 +483,10 @@ Unfortunately I didn't do all of the tests for the GazeTracking algorithm. Was t
 
 \subsubsection{Creating the initial prototype}
 Write about the code you made for the inital prototype. this was basic python code that used YOLO to detect people. it currently identifies a shoulder surfer if there is more than one person detected (suggesting the second person is the shoulder surfer) however this is not accurate and should be changed for the final product. A basic UI was created so that the detector can be turned on/off. The camera livestream is used whenever the code is running - it doesn't stop accessing the camera even if the stop button is pressed. An alert noise was found online (check the permissions for this). I struggled to create the brightness decrease - talk about how you first just made a 'blur' but this did not work properly on macOS so you chnaged it to access mac shortcuts (i think that's what it is). talk about how it isnt yet usable for all OS's - currently only mac so this needs to be changed. make sure you put some code snippits in here to look cool.
+
+% Long form code listings can be taken directly from an external file.
+\lstinputlisting[language={python}, firstline=38, lastline=72 label={lst:useryolo}, caption={An
+  implementation of some amazing code.}]{./listings/useryolo.py}
 
 \subsubsection{Initial prototype User study}
 planning
