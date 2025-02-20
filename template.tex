@@ -403,6 +403,21 @@ It was important to review other detection methods. An eye tracking system was i
 
 \textcolor{blue}{The compare the two algorithms, it will be down to the most tests passed. Both have their advantages and disadvantages so there should be discussed.}
 
+\textcolor{purple}{I have written about the two algorithms but this will have to be written academically - most of the content is there though.}
+
+\textcolor{purple}{Background research on Gaza Tracking will have to be done.}
+
+\textcolor{purple}{Permissions will have to be looked into and checked on Uni website.}
+
+\textcolor{purple}{Use an appendix to put test images in? Perhaps just show the important ones in main and then reference appendix. For gaze tracking, I think I should talk about test 2/3 and how it couldn't even identify one person and how they literally had to be directly infront of screen. Then show test 5 and say that there was no chance it would work (but the say about how it detected user 1's eyes.}
+
+\textcolor{purple}{I should maybe suggest that I didn't choose the best eye tracking algorithm? I just say that I didn't know that only one person could be identified at once until I did the testing.}
+
+\textcolor{purple}{Perhaps suggest that the code could be adapted to ignore the direct user (user in this case) and should just look for others - but put in practice, it wouldn't work because at a 1 meter distance +, they can't be tracked (especially when YOLO can track 8+ meters).}
+
+\textcolor{purple}{On that note, talk about how you couldn't test a further distance because the test location room wasn't big enough without moving the screen ('which would then chnage lighting ect. ). However it may not be nessacry as I doubt anyone could read the screen from further than that distence anyway. Maybe suggest that to improve testing, that more than one environemt would be tested and introduce more than one passer-by but back yourself by saying this was to just establish the effectivness of the base algorithm - so these tests should just be done further down the line.}
+
+
 \subsubsection{Planning tests}
 I want to test the following:
 \begin{itemize}
@@ -453,6 +468,13 @@ So, after testing, we know that the person detection is a lot better. One issue 
 
 Unfortunately I didn't do all of the tests for the GazeTracking algorithm. Was this a good idea? For the next testing stage, I want to ensure I produce more tests. No point doing tests 6-14 as two users were used but the algorithm could identify only one. I did check if the use of glasses was effecting it, but they weren't.
 
+\subsubsection{Creating the initial prototype}
+Write about the code you made for the inital prototype. this was basic python code that used YOLO to detect people. it currently identifies a shoulder surfer if there is more than one person detected (suggesting the second person is the shoulder surfer) however this is not accurate and should be changed for the final product. A basic UI was created so that the detector can be turned on/off. The camera livestream is used whenever the code is running - it doesn't stop accessing the camera even if the stop button is pressed. An alert noise was found online (check the permissions for this). I struggled to create the brightness decrease - talk about how you first just made a 'blur' but this did not work properly on macOS so you chnaged it to access mac shortcuts (i think that's what it is). talk about how it isnt yet usable for all OS's - currently only mac so this needs to be changed. make sure you put some code snippits in here to look cool.
+
+\subsubsection{Initial prototype User study}
+planning
+execution
+results
 
 % Prints the Reference section
 \printbibliography
