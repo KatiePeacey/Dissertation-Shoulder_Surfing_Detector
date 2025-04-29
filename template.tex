@@ -158,13 +158,31 @@ The proposed solution is a software-based approach that detects potential should
 
 The system uses a live video input combined with a gaze tracking algorithm to determine whether a user is being observed. The central idea is to detect multiple faces within the webcam view and compare this to the gaze direction to decide whether an unauthorised person is looking at the user’s screen. Once detected, the system triggers a response where the screen brightness is reduced, and an audio alert plays to notify the user discreetly. The user can remain in control of the system via a graphical interface with start/stop buttons and customizable settings.
 
-\subsection{Determining an appropriate algorithm}
-\label{Determining an appropriate algorithm}
+\subsubsection{Human-Centred Design and UX Principles}
+
+The system was designed following established Human-Computer Interaction (HCI) principles, with particular reference to Nielsen’s usability heuristics and Don Norman’s principles of design. Rather than overwhelming users with intrusive pop-ups or constant alerts, the system alights with Norman’s idea of making important system state visible and providing natural mappings between intentions and outcomes. We ensured that feedback is delivered through screen dimming and subtle sounds which allow for clear communication without demanding excessive attention.
+
+The interface supports discoverability and feedback as per Norman’s principles by allowing adjustable settings that can be easily understood and controlled. The settings allow for the screen brightness when dimmed to be altered using a sliding bar and alert sounds can be toggled on and off. We have also ensured that the layout is simple by using minimal buttons, clear labels and consistent interaction patterns so that the user can easily use the system through recognition an have a minimal chance of making errors (Neiman, 2019).
+
+\subsubsection{Privacy and Local Processing}
+
+The system was built with privacy by design in mind, so all data processing occurs locally on the user’s device and no images or videos are saved, transmitted, or stored. This approach aligns with GDPR principles and reassures users that their data remains under their control. Since the webcam feed never leaves the device and is not stored in any form, the system supports high standards of personal data protection.
+
+\subsection{Architecture}
+\label{Architecture}
+The software works by capturing live webcam input using the OpenCV library, which provides an efficient way to access real-time video streams. This video stream is not stored but is used to detect people in front of the device in current time.
+
+For face detection, the final system makes use of the dlib library, specifically the pretrained Histogram of Oriented Gradients (HOG)-based face detector. This algorithm effectively identifies frontal faces in a range of lighting conditions and is computationally efficient enough for a real-time detector. Once a face is detected, dlib’s 68-point facial landmark model is used to map specific facial features, particularly around the eyes.
+
+Using the key eye landmarks, the system estimates gaze direction through geometric calculations where the relative position of the pupil within the eye socket and alignment with eye corners is used to infer whether the user is focused on the screen. If the system detects more than one face and confirms that the user is looking at the display, if flags as a potential shoulder surfing threat.
+
+When a threat is detected, the system initiates feedback to the user by dimming the screen using the screen-brightness-control library and plays an alert sound to attract the user’s attention. The user interface has been built with customtkinter which provides an interactive control panel that includes start and stop buttons, a live video preview and a log of recent detection events for transparency and usability.
+
 
 With the focus of the project being the user experience instead of the direct detection, we researched different machine learning algorithms that could be used to effectively identify more than one person within the webcam view at once.
 
 \subsubsection{YOLO (You Only Look Once)}
-During the initial planning of this project, an object detection algorithm called YOLO \textcolor{red}{ref here} was identified as a possible solution. 
+During the initial planning of this project, an object detection algorithm called YOLO \textcolor{red}{ref here} was identified as a suitable method for detecting the presence of onlookers.
 YOLO (You Only Look Once) is an object detection algorithm produced in 2015 by Redmon et al. which uses bounding boxes to predict the probability of what each object is \cite{redmon_you_2016}. The algorithm has been trained using the ImageNet dataset \cite{noauthor_imagenet_nodate} and can detect from traffic lights to toilets. The YOLO model splits each image into a grid and produces bounding boxes for each cell, a class probability is listed, and a confidence score is calculated. The class probability is the likelihood that each object belongs to each class (e.g. bottle, person, chair) and the confidence is the likelihood that there is an object in that cell \cite{redmon_you_2016}. An overall confidence score can then be calculated and produced to the user using the formula: 
 \[
   Confidence = Object Confidence Score \times Class Probability
@@ -205,8 +223,7 @@ Images a and b demonstrate how more than one person can be identified at once �
 
 
 \subsubsection{Eye detection using dlib}
-
-Gaze tracking was identified as an appropriate way to detect a potential shoulder surfer by tracking the eyes of a secondary user to enable the alerts. Dlib is an open-source software library (King, 2019) including 68-point facial landmark detection model that is based on the Histogram of Oriented Gradients (HOG) combined with a linear support vector machine (SVM) which allows for effective detection of faces within the camera (Kazemi & Sullivan, 2014).
+To enable gaze-based detection, dlib was identified as an appropriate solution for its efficient face detection and facial landmark prediction capabilities. Dlib is an open-source software library (King, 2019) including 68-point facial landmark detection model that is based on the Histogram of Oriented Gradients (HOG) combined with a linear support vector machine (SVM) which allows for effective detection of faces within the camera (Kazemi & Sullivan, 2014).
 
 The shape predictor in dlib uses multiple regression trees to detect facial landmarks including the eyes, nose and mouth. The model was identified as useful for this project due the accurate feature recognition of multiple people at once allowing for gaze estimations to be calculated.
 During initial planning, the model was imported into Python and used to identify any faces with the camera. Figure~\ref{fig:dlib} shows the code being run on an Apple Macbook (720p FaceTime HD camera) to demonstrate how more than one person can be identify when facing forward.
@@ -250,7 +267,7 @@ Image a shows how more than one face can be identified at once where all 68 poin
 
 \subsubsection{Algorithm comparison}
 
-A comparison between the two models highlights the strengths and weaknesses of both and how they could be applied within the system.
+A comparison between YOLO and dlib in table \ref{table:1} highlights their strengths and limitations in context to the project. YOLO provides a quick object recognition with high accuracy at a distance, making it ideal for detecting the presence of other people. However, it lacks the ability to identify a gaze direction whereas dlib offers a detailed facial feature tracking which important for estimating where a user is looking.
 
 \begin{table}[h!]
     \begin{center}
