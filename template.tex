@@ -11,6 +11,7 @@
 \usepackage{listings}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{tabularx}
 \lstset{
   tabsize=2,
   breaklines=true,
@@ -248,6 +249,35 @@ Image a shows how more than one face can be identified at once where all 68 poin
 \end{figure}
 
 \subsubsection{Algorithm comparison}
+
+A comparison between the two models highlights the strengths and weaknesses of both and how they could be applied within the system.
+
+\begin{table}[h!]
+    \begin{center}
+        \begin{tabularx}{0.8\textwidth} { 
+              | >{\centering\arraybackslash}X 
+              | >{\centering\arraybackslash}X 
+              | >{\centering\arraybackslash}X | }
+            \hline
+            \textbf{Feature} & \textbf{YOLO} & \textbf{dlib} \\ [0.5ex]
+             \hline \hline
+             \textbf{Primary purpose} & Object detection (multiple classes) & Face and facial landmark detection \\
+              \hline
+             \textbf{Detection type}  & Bounding box classification  & Geometric point mapping  \\
+             \hline
+             \textbf{Accuracy at distance}  & High (tested up to 6m with high confidence)  & Low (drops beyond ~3m)  \\
+            \hline
+            \textbf{Use in system} & Detects presence of multiple people & Supports gaze tracking via eye landmarks \\
+            \hline
+            \textbf{Limitations} & Cannot infer gaze or intent & Less effective if user is not front-facing \\ [1ex]
+            \hline
+        \end{tabularx}
+    \end{center}
+    \caption{A comparison between YOLO and dlib.}
+    \label{table:1}
+\end{table}
+
+Together, these models formed the core detection strategies used during prototyping and producing the system. Whilst YOLO was used during the first iteration to broadly identify the presence of more than one person, the dlib library was used during the final solution to accurately identify and track the gaze direction of a potential shoulder surfer. The direct use of these will be discussed during the implementation part of this paper.
 
 
 \end{document}
