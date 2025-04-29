@@ -9,6 +9,8 @@
 \usepackage{longtable}
 \usepackage{gensymb}
 \usepackage{listings}
+\usepackage{caption}
+\usepackage{subcaption}
 \lstset{
   tabsize=2,
   breaklines=true,
@@ -141,7 +143,7 @@ Computer vision techniques have gained traction for dynamic user-aware defences.
 
 Gaze interaction has been increasingly used not only for input but also for context awareness and security. Holland and Komogortsev (2012) demonstrated that haze can be used for continuous authentication, while Kumar et al. (2007) showed gaze patterns can distinguish between users. Recent work by Liu et al. (2007) investigates how gaze cues can signal environmental risks without interrupting primary tasks. Such ambient strategies align closely with Weiser and Brown’s (1996) concept of calm technology interfaces that remain in the background until needed.
 
-Something about UX. Research by Cranor and Garfinkel (2005) and more recent works by Nappa et al. (2019) confirm that users resist tools that are overly intrusive or complex. This proves that the most effective solutions are those that operate passively, offer user control and integrate smoothly into daily workflows. Expand bitch.
+Something about UX. Research by Cranor and Garfinkel (2005) and more recent works by Nappa et al. (2019) confirm that users resist tools that are overly intrusive or complex. This proves that the most effective solutions are those that operate passively, offer user control and integrate smoothly into daily workflows.
 
 Our system stands in the intersection of these lines of research. It bridges the high-performance detection with subtle, user-oriented alerts, guided by formative research in UX and informed by the limitations of past solutions.
 
@@ -170,17 +172,82 @@ The confidence will then be listed between 1 and 0, 0 being no object found.
 
 During initial planning, the algorithm was imported into Python and connected to the device’s camera. It was verified that YOLO processes images at 45 frames per second \cite{redmon_you_2016} meaning a passer-by should be detected in the time they walk past the screen. Figure~\ref{fig:figure1} shows the code being run on an Apple MacBook (720p FaceTime HD camera) to demonstrate its ability to detect more than one person at different distances and angles.
 
-Images 1 and 2 demonstrate how more than one person can be identified at once – something that the shoulder surfing detector needs to do. Facial features do not need to be present to be identified correctly. Image 3 shows the main user with the onlooker stood approximately 6 meters behind. This resulted in an average confidence score of 0.95 meaning it was a strong identification.
+Images a and b demonstrate how more than one person can be identified at once – something that the shoulder surfing detector needs to do. Facial features do not need to be present to be identified correctly. Image c shows the main user with the onlooker stood approximately 6 meters behind. This resulted in an average confidence score of 0.95 meaning it was a strong identification.
+
+
+\begin{figure}
+     \centering
+     \begin{subfigure}[b]{0.3\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{img/fig1-img1.png}
+         \caption{Forward facing}
+         \label{fig:a}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.3\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{img/fig1-img2.png}
+         \caption{Backward facing}
+         \label{fig:b}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.3\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{img/fig1-img3.png}
+         \caption{From a distance}
+         \label{fig:c}
+     \end{subfigure}
+        \caption{YOLO being used to detect more than one person in-front of the camera. The observer stands at different distances and angles to test the system.}
+        \label{fig:yolo}
+\end{figure}
+
+
+
+\subsubsection{Eye detection using dlib}
+
+Gaze tracking was identified as an appropriate way to detect a potential shoulder surfer by tracking the eyes of a secondary user to enable the alerts. Dlib is an open-source software library (King, 2019) including 68-point facial landmark detection model that is based on the Histogram of Oriented Gradients (HOG) combined with a linear support vector machine (SVM) which allows for effective detection of faces within the camera (Kazemi & Sullivan, 2014).
+
+The shape predictor in dlib uses multiple regression trees to detect facial landmarks including the eyes, nose and mouth. The model was identified as useful for this project due the accurate feature recognition of multiple people at once allowing for gaze estimations to be calculated.
+During initial planning, the model was imported into Python and used to identify any faces with the camera. Figure~\ref{fig:dlib} shows the code being run on an Apple Macbook (720p FaceTime HD camera) to demonstrate how more than one person can be identify when facing forward.
+
+Image a shows how more than one face can be identified at once where all 68 points are drawn onto the user. Images b and c demonstrate how a user cannot be identified when turned around or from approximately 3 meters behind. This highlights that the onlooker would need to present their facial features closely to the camera in order to be identified.
+
 
 \begin{figure}[ht]
-
 \centering
-\includegraphics[width=.3\textwidth]{img/fig1-img1.png}\hfill
-\includegraphics[width=.3\textwidth]{img/fig1-img2.png}\hfill
-\includegraphics[width=.3\textwidth]{img/fig1-img3.png}\hfill
+\fbox{\includegraphics[width=.3\textwidth]{img/facial-landmarks.png}\hfill}
 
-\caption{YOLO being used to detect more than one person in-front of the camera. The observer stands at different distances and angles to test the system.}
-\label{fig:figure1}
+\caption{68 facial landmarks (2018).}
+\label{fig:figure2}
 \end{figure}
+
+\begin{figure}
+     \centering
+     \begin{subfigure}[b]{0.3\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{img/face_img1.png}
+         \caption{Forward facing}
+         \label{fig:face_a}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.3\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{img/face_img2.png}
+         \caption{Backward facing}
+         \label{fig:face_b}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.3\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{img/face_img3.png}
+         \caption{From a distance}
+         \label{fig:face_c}
+     \end{subfigure}
+        \caption{dlib facial recognition being used to detect more than one person in-front of the camera. The observer stands at different distances and angles to test the system.}
+        \label{fig:dlib}
+\end{figure}
+
+\subsubsection{Algorithm comparison}
+
 
 \end{document}
