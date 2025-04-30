@@ -12,6 +12,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{tabularx}
+\usepackage{listings}
 \lstset{
   tabsize=2,
   breaklines=true,
@@ -25,6 +26,7 @@
   stringstyle=\ttfamily\color{blue!50!black},
   backgroundcolor=\color{yellow!10}
 }
+
 % Uses the newer biblatex (with biber as backend) for citations and
 % references. Can deal with non-ascii letters in author names.
 \usepackage{biblatex}
@@ -170,31 +172,41 @@ The system was built with privacy by design in mind, so all data processing occu
 
 \subsection{Architecture}
 \label{Architecture}
-The software works by capturing live webcam input using the OpenCV library, which provides an efficient way to access real-time video streams. This video stream is not stored but is used to detect people in front of the device in current time.
+The software works by capturing live video input using the OpenCV library, which provides an efficient way to access real-time video streams. Rather than storing video feeds, frames are processing in real time to identify potential privacy threats.
 
-For face detection, the final system makes use of the dlib library, specifically the pretrained Histogram of Oriented Gradients (HOG)-based face detector. This algorithm effectively identifies frontal faces in a range of lighting conditions and is computationally efficient enough for a real-time detector. Once a face is detected, dlib’s 68-point facial landmark model is used to map specific facial features, particularly around the eyes.
+For face detection, the system makes use of the dlib library’s Histogram of Oriented Gradients (HOG)-based face detector where detection speed and accuracy are computationally efficient to identify presence of more than one person. Upon detecting a face, the system applies dlib’s 68-point facial landmark model to identify specific points around the eyes needed for gaze estimation. 
 
-Using the key eye landmarks, the system estimates gaze direction through geometric calculations where the relative position of the pupil within the eye socket and alignment with eye corners is used to infer whether the user is focused on the screen. If the system detects more than one face and confirms that the user is looking at the display, if flags as a potential shoulder surfing threat.
+Using the key eye landmarks, the system estimates gaze direction through geometric calculations where the relative position of the pupil within the eye socket and alignment with eye corners is used to infer whether the user is focused on the screen. Detection logic can then flag a potential shoulder surfing threat when multiple faces are present, and the user’s gaze is focused on the screen.
 
-When a threat is detected, the system initiates feedback to the user by dimming the screen using the screen-brightness-control library and plays an alert sound to attract the user’s attention. The user interface has been built with customtkinter which provides an interactive control panel that includes start and stop buttons, a live video preview and a log of recent detection events for transparency and usability.
+When a threat is detected, the system initiates feedback to the user by dimming the screen using the screen\textunderscore brightness\textunderscore control library and plays an alert sound to attract the user’s attention. The user interface has been built with customtkinter which provides an interactive control panel that includes start and stop buttons, a live video preview and a log of recent detection events for transparency and usability. 
 
+In the initial prototype, YOLO (You Only Look Once) was used for person detection due to its high-speed object recognition, however in further development, this was replaced with dlib to enable integrated facial landmark tracking for gaze estimation. Justification for this is discussed further in the paper.
 
-With the focus of the project being the user experience instead of the direct detection, we researched different machine learning algorithms that could be used to effectively identify more than one person within the webcam view at once.
+Figure~\ref{fig:architecture} demonstrates the flow of the system and how the architecture has been built in a modular way to allow for improvements and further research.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.3\linewidth]{img/architecture.png}
+    \caption{Diagram to show the overall system architecture flow of the proposed solution.}
+    \label{fig:architecture}
+\end{figure}
+
 
 \subsubsection{YOLO (You Only Look Once)}
-During the initial planning of this project, an object detection algorithm called YOLO \textcolor{red}{ref here} was identified as a suitable method for detecting the presence of onlookers.
+During early development of this project, an object detection algorithm called YOLO \textcolor{red}{ref here} was identified as a suitable method for detecting the presence of onlookers.
 YOLO (You Only Look Once) is an object detection algorithm produced in 2015 by Redmon et al. which uses bounding boxes to predict the probability of what each object is \cite{redmon_you_2016}. The algorithm has been trained using the ImageNet dataset \cite{noauthor_imagenet_nodate} and can detect from traffic lights to toilets. The YOLO model splits each image into a grid and produces bounding boxes for each cell, a class probability is listed, and a confidence score is calculated. The class probability is the likelihood that each object belongs to each class (e.g. bottle, person, chair) and the confidence is the likelihood that there is an object in that cell \cite{redmon_you_2016}. An overall confidence score can then be calculated and produced to the user using the formula: 
 \[
   Confidence = Object Confidence Score \times Class Probability
 \]
 The confidence will then be listed between 1 and 0, 0 being no object found.
 
-During initial planning, the algorithm was imported into Python and connected to the device’s camera. It was verified that YOLO processes images at 45 frames per second \cite{redmon_you_2016} meaning a passer-by should be detected in the time they walk past the screen. Figure~\ref{fig:figure1} shows the code being run on an Apple MacBook (720p FaceTime HD camera) to demonstrate its ability to detect more than one person at different distances and angles.
+During initial planning, the algorithm was imported into Python and connected to the device’s camera. It was verified that YOLO processes images at 45 frames per second \cite{redmon_you_2016} meaning a passer-by should be detected in the time they walk past the screen. Figure~\ref{fig:yolo} shows the code being run on an Apple MacBook (720p FaceTime HD camera) to demonstrate its ability to detect more than one person at different distances and angles.
 
-Images a and b demonstrate how more than one person can be identified at once – something that the shoulder surfing detector needs to do. Facial features do not need to be present to be identified correctly. Image c shows the main user with the onlooker stood approximately 6 meters behind. This resulted in an average confidence score of 0.95 meaning it was a strong identification.
+Images \ref{fig:a} and \ref{fig:b} demonstrate how more than one person can be identified at once – something that the shoulder surfing detector needs to do. Facial features do not need to be present to be identified correctly. Image \ref{fig:c} shows the main user with the onlooker stood approximately 6 meters behind. This resulted in an average confidence score of 0.95 meaning it was a strong identification.
 
+However, we discovered after user studies and testing that YOLO's limitation lies in its inability to infer gaze or user intent. It identifies 'who' is present but not 'what' they are doing, leading to the exploration of gaze tracking solutions.
 
-\begin{figure}
+\begin{figure}[h!]
      \centering
      \begin{subfigure}[b]{0.3\textwidth}
          \centering
@@ -220,26 +232,25 @@ Images a and b demonstrate how more than one person can be identified at once �
         \label{fig:yolo}
 \end{figure}
 
-
-
 \subsubsection{Eye detection using dlib}
-To enable gaze-based detection, dlib was identified as an appropriate solution for its efficient face detection and facial landmark prediction capabilities. Dlib is an open-source software library (King, 2019) including 68-point facial landmark detection model that is based on the Histogram of Oriented Gradients (HOG) combined with a linear support vector machine (SVM) which allows for effective detection of faces within the camera (Kazemi & Sullivan, 2014).
+To enable gaze-based detection, dlib was identified as an appropriate solution for its efficient face detection and facial landmark prediction capabilities. Dlib is an open-source software library (King, 2019) including 68-point facial landmark detection model (see figure \ref{fig:facial-landmarks}) that is based on the Histogram of Oriented Gradients (HOG) combined with a linear support vector machine (SVM) which allows for effective detection of faces within the camera (Kazemi & Sullivan, 2014).
 
 The shape predictor in dlib uses multiple regression trees to detect facial landmarks including the eyes, nose and mouth. The model was identified as useful for this project due the accurate feature recognition of multiple people at once allowing for gaze estimations to be calculated.
-During initial planning, the model was imported into Python and used to identify any faces with the camera. Figure~\ref{fig:dlib} shows the code being run on an Apple Macbook (720p FaceTime HD camera) to demonstrate how more than one person can be identify when facing forward.
 
-Image a shows how more than one face can be identified at once where all 68 points are drawn onto the user. Images b and c demonstrate how a user cannot be identified when turned around or from approximately 3 meters behind. This highlights that the onlooker would need to present their facial features closely to the camera in order to be identified.
+Before implementation, the model was imported into Python and used to identify any faces with the camera. Figure~\ref{fig:dlib} shows the code being run on an Apple Macbook (720p FaceTime HD camera) to demonstrate how more than one person can be identify when facing forward.
+
+Image \ref{fig:face_a} shows how more than one face can be identified at once where all 68 points are drawn onto the user. Images \ref{fig:face_b} and \ref{fig:face_c} demonstrate how a user cannot be identified when turned around or from approximately 3 meters behind. This highlights that the onlooker would need to present their facial features closely to the camera in order to be identified. Despite these challenged, dlib was identified as computationally efficient and reliable making it a practical choice for gaze detection.
 
 
-\begin{figure}[ht]
+\begin{figure}[h!]
 \centering
 \fbox{\includegraphics[width=.3\textwidth]{img/facial-landmarks.png}\hfill}
 
 \caption{68 facial landmarks (2018).}
-\label{fig:figure2}
+\label{fig:facial-landmarks}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[h!]
      \centering
      \begin{subfigure}[b]{0.3\textwidth}
          \centering
@@ -265,36 +276,121 @@ Image a shows how more than one face can be identified at once where all 68 poin
         \label{fig:dlib}
 \end{figure}
 
-\subsubsection{Algorithm comparison}
-
-A comparison between YOLO and dlib in table \ref{table:1} highlights their strengths and limitations in context to the project. YOLO provides a quick object recognition with high accuracy at a distance, making it ideal for detecting the presence of other people. However, it lacks the ability to identify a gaze direction whereas dlib offers a detailed facial feature tracking which important for estimating where a user is looking.
-
-\begin{table}[h!]
-    \begin{center}
-        \begin{tabularx}{0.8\textwidth} { 
-              | >{\centering\arraybackslash}X 
-              | >{\centering\arraybackslash}X 
-              | >{\centering\arraybackslash}X | }
-            \hline
-            \textbf{Feature} & \textbf{YOLO} & \textbf{dlib} \\ [0.5ex]
-             \hline \hline
-             \textbf{Primary purpose} & Object detection (multiple classes) & Face and facial landmark detection \\
-              \hline
-             \textbf{Detection type}  & Bounding box classification  & Geometric point mapping  \\
-             \hline
-             \textbf{Accuracy at distance}  & High (tested up to 6m with high confidence)  & Low (drops beyond ~3m)  \\
-            \hline
-            \textbf{Use in system} & Detects presence of multiple people & Supports gaze tracking via eye landmarks \\
-            \hline
-            \textbf{Limitations} & Cannot infer gaze or intent & Less effective if user is not front-facing \\ [1ex]
-            \hline
-        \end{tabularx}
-    \end{center}
-    \caption{A comparison between YOLO and dlib.}
-    \label{table:1}
-\end{table}
-
 Together, these models formed the core detection strategies used during prototyping and producing the system. Whilst YOLO was used during the first iteration to broadly identify the presence of more than one person, the dlib library was used during the final solution to accurately identify and track the gaze direction of a potential shoulder surfer. The direct use of these will be discussed during the implementation part of this paper.
 
+\section{Implementation}
+\subsection{Overview}
+
+The implementation of the shoulder surfing detection system was produced using a user-centred, iterative development process. The system was built using Python due to its accessibility and wide library support \textcolor{red}{ref here}. The main libraries used include OpenCV \textcolor{red}{ref here} for real-time webcam capture, dlib \textcolor{red}{ref here} for face and landmark detection, and customtkinter \textcolor{red}{ref here} for building the graphical user interface. Testing and development were conducted on a Macbook with a 720p FaceTime HD webcam, although the software was designed to operate cross-platform where possible.
+The development was structured into two major phases where the initial prototype relied solely on persona detection using YOLO, while the final version incorporated gaze estimation using dlib’s facial landmark detection. This section describes each phase, the system’s interface and the decisions made to support modularity and responsiveness.
+
+\subsection{Prototype 1: YOLO-Based Detection}
+
+The first version featured a basic graphical interface, consisting only of a start and stop controls hardcoded into the script. These were no adjustable settings or real-time feedback provided to the user. While this minimal interface was sufficient for functional testing, it lacked the usability features required for regular, user-friendly operation.
+
+In this version, the YOLOv8 model for person detection was used due to its ability to detect multiple people at high speed (up to 45 FPS) making is a strong algorithm to help identify the presence of potential shoulder surfers in real time. The model was integrated into the system through the Ultralytics Python interface \textcolor{red}{ref here} and connected to the webcam feed via OpenCV.
+
+The initial logic flagged a potential threat if more than one person was detected within the frame. If this condition was met, the system dimmed the screen and played an audio warning using the playsound library. It was clear from user studies (see \ref{sec:Evaluation}) that while the prototype was effective in detecting people at varying distances and angles, it lacked the ability to recognise whether the user was actually being observe causing false positives especially in busier environments.
+
+\subsection{Prototype 2: Gaze Detection with dlib}
+
+In response to the limitations to the first prototype, the second iteration introduced gaze tracking using dlib’s 68-point facial landmark model. This logic provided a lightweight and efficient method for frontal face detection where once a face was detected, specific landmarks around the eyes were used to estimate gaze direction.
+
+Gaze was approximated by comparing the horizontal and vertical alignment of the pupil relative to the eye corners (see 4.3.1). A custom function determined whether the gaze was focused toward the centre, left or right which allowed the system to infer whether the user was likely looking at the screen. A shoulder surfing threat was only triggered when more than one face was present and the user’s gaze was focused on the screen, significantly reducing false positives from before.
+
+This prototype also introduced a frame counter and delay which means that if a previously detected threat disappeared for a set number of frames, the system automatically restored brightness, improving responsiveness without introducing any major visual changes.
+
+Alongside the improved detection logic, this iteration also introduced a new user interface to address the usability limitation of prototype 1. The updated GUI, discussed in the next section, provided real-time control, visual feedback and configuration options, making the system more user-friendly and practical for everyday use.
+
+\subsubsection{Gaze Calculations}
+
+To estimate gaze direction, the system computes midpoints and defines horizontal and vertical eye reference lines using facial landmarks from dlib's 68-point model. For the right eye:
+
+\begin{itemize}
+
+    \item Let \( P_{43} = (x_{43}, y_{43}) \) and \( P_{46} = (x_{46}, y_{46}) \) denote the outer and inner corners of the right eye.
+
+    \item Let \( P_{44}, P_{45}, P_{48}, P_{47} \) denote the upper and lower eyelid landmarks.
+
+\end{itemize}
+The horizontal reference line is defined as:
+\[
+\text{Horizontal Line}_{\text{right}} = \overline{P_{43}P_{46}}
+\]
+
+The vertical reference line uses the midpoint of the upper and lower eyelids:
+\[
+M_{\text{top}} = \left( \frac{x_{44} + x_{45}}{2}, \frac{y_{44} + y_{45}}{2} \right)
+\]
+
+\[
+M_{\text{bottom}} = \left( \frac{x_{48} + x_{47}}{2}, \frac{y_{48} + y_{47}}{2} \right)
+\]
+
+\[
+\text{Vertical Line}_{\text{right}} = \overline{M_{\text{top}}M_{\text{bottom}}}
+\]
+
+This calculation is mirrored for the left eye using landmarks \( P_{37} \) through \( P_{42} \). A visal graphic is shown in figure \ref{fig:eye_calc} to help understand where the points are located in real life. In the system, these lines are visualised on the video frame to assist with approximate gaze direction detection. A code snippet of these calculations put into practice are provided in appendix \ref{app:gaze_calcs}.
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{img/Eye_calc.jpg}
+    \caption{Graphic to show key eye point landmark calculations taken from the 68-point landmarks used to detect and track gaze direction in the system.}
+    \label{fig:eye_calc}
+\end{figure}
+
+\subsection{Graphical User Interface (GUI)}
+
+The GUI (see figure \ref{fig:gui_overview}) was developed using the customtkinter library to offer a modern interface to the user. The sidebar layout was designed to give users easy access to core functions: starting and stopping detection, viewing logs, adjusting dimming brightness and toggling audio alerts.
+
+Controls include:
+\begin{itemize}
+  \item Start/Stop buttons: Controls the detection, buttons change colour when active.
+  \item Brightness slider: Adjusts screen dimming level.
+  \item Sound toggle: Enables or disables warning sounds.
+  \item Log panel: Displays recent events for transparency and trust.
+\end{itemize}
+
+The layout adheres to Don Norman’s usability principles by providing clear feedback, discoverability, and user control. Default settings were chosen for general usability but are customisable for different environments.
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{img/gui.png}
+    \caption{System interface with live feed}
+    \label{fig:gui_face}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[c]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.6\linewidth]{img/sidebar.png}
+    \caption{System control panel}
+    \label{fig:gui_controls}
+  \end{subfigure}
+  \caption{Interface elements showing (a) the detection system in use, and (b) the customisable control panel.}
+  \label{fig:gui_overview}
+\end{figure}
+
+\subsection{Technical Challenges and Solutions}
+
+Several challenges arose during development:
+\begin{itemize}
+  \item Brightness control across platforms: On macOS, Python’s screen\textunderscore brightness\textunderscore control library had limited compatibility, so fallback shell commands were used.
+  \item False positives in early testing: Without gaze logic, many non-threats triggered alerts. The second prototype addressed this by coupling gaze and presence detection.
+  \item Low-light performance: Face and eye detection reduced in dim lighting. Histogram equalisation and threshold tuning were explored to enhance reliability.
+  \item Real-time performance: To reduce lag for prototype 1, only every fifth video frame was processed during detection. This reduced CPU load while maintaining responsiveness.
+\end{itemize}
+
+These technical improvements ensured the system remained responsive, lightweight, and practical for everyday use. The implementation phase demonstrated the feasibility of real-time, ambient shoulder surfing detection using accessible, open-source tools.
+
+\clearpage\appendix
+
+\section{Calculations for gaze tracking}
+\label{app:gaze_calcs}
+
+\lstinputlisting[language=Python, caption={Calculations used for gaze tracking in Python.}, firstline=188, lastline=205]{./listings/Stats.py}
 
 \end{document}
