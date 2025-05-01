@@ -104,7 +104,7 @@
 \studentdeclarations
 
 \begin{frontmatterparagraph}{Abstract}
-Shoulder surfing is the act of visually observing someone’s private screen interactions without their consent and remains a significant privacy concern in public and semi-public spaces. From entering passwords at ATMs to composing confidential emails on laptops in cafes, users are increasingly vulnerable to visual eavesdropping. Past work on solutions such as physical privacy screens or behavioural adjustments often require users to alter their behaviour or purchase additional hardware however these approaches frequently compromise usability, reduce screen visibility or demand constant user vigilance. This paper introduces a software-based shoulder surfing detection system developed using Python. The system uses real-time gaze tracking to identify the presence of unauthorised viewers and responds by sounding an alert and dimming the display to obscure sensitive content. The system has been designed  with the user experience in mind, so seeks to be non-intrusive and responsive to the user context indicating a strong potential for broader application across both mobile and desktop platforms.
+Shoulder surfing is the act of visually observing someone’s private screen interactions without their consent and remains a significant privacy concern in public and semi-public spaces. From entering passwords at ATMs to composing confidential emails on laptops in cafes, users are increasingly vulnerable to visual eavesdropping. Past work on solutions such as physical privacy screens or behavioural adjustments often require users to alter their behaviour or purchase additional hardware, however these approaches frequently compromise usability, reduce screen visibility or demand constant user vigilance. This paper introduces a software-based shoulder surfing detection system developed using Python. The system uses real-time gaze tracking to identify the presence of unauthorised viewers and responds by sounding an alert and dimming the display to obscure sensitive content. The system has been designed  with the user experience in mind, so seeks to be non-intrusive and responsive to the user context indicating a strong potential for broader application across both mobile and desktop platforms.
 \end{frontmatterparagraph}
 
 % Build the table of contents page.
@@ -121,17 +121,26 @@ Shoulder surfing is the act of visually observing someone’s private screen int
 \section{Introduction}
 \label{sec:intro}
 
-As mobile computing becomes more embedded in daily life, the risks associated with using devices in public spaces grow. One such risk is shoulder surfing, where an attacker visually observes private information on a user’s screen, either actively or passively (Eiband et al. 2017). With the increasing use the laptops, tablets, mitigating the risk without disrupting the users experience is  a growing concern. 
+As mobile computing becomes more embedded in daily life, individuals are more likely to interact with laptops, tablets, and smartphones in public or semi-public spaces such as cafes, libraries, offices, or public transport. This exposure increases security and privacy concerns including the risk of shoulder surfing, which is the act of observing someone else’s screen to gather privacy or sensitive information without their consent.
 
-Traditional solutions like privacy screen protectors (Lian et al. 2013) and authentication methods (Passfaces, DAS), often rely on hardware or face challenges in long-term usability. There is a need for adaptive, ambient solutions that are minimally intrusive and seamlessly integrate with user behaviour.
+Shoulder surfing can occur both deliberately and inadvertently. In its deliberate form, an attack may position themselves behind or beside a victim to watch as they enter passwords, read sensitive emails, or access personal data. Inadvertent cases can involve passers-by or nearby users unintentionally glancing at a screen due to curiosity or proximity, still resulting in an invasion of privacy. Eiband et al. describes shoulder surfing as both a common and underestimated threat, particularly in environments where users are less aware of their surroundings \cite{eiband_understanding_2017}. Similarly, research by Aviv et al. demonstrates how observational attacks can be used to accurately extract PINs, swipe patterns, and alphanumeric passwords with minimal effort \cite{aviv_towards_2017}.
 
-This paper introduces a gaze-based detection system as a productive solution to shoulder surfing. Implemented in Python, the system utilizes computer vision and gaze estimation techniques to monitor the presence of faces within a device’s camera view.
+The risk associated with shoulder surfing is not limited to password theft as attackers can also capture financial details, health records, business correspondence or even biometric data by simply watching a screen. As these attacks often require no technical skill and can be carried out using the naked eye or a camera, their easy method of attack makes them especially concerning \cite{block_impact_2010}. In addition, modern device screens with high brightness and wide viewing angles inadvertently help attackers by making the screen contents visible from wider perspectives.
 
-The primary contributions of this research are:
--	The development and evaluation of a user-centred, software-only shoulder surfing detection tool.
--	A user-centred design approach emphasizing unobtrusive, ambient feedback.
--	Add aims here?
+Given these risks, mitigating shoulder surfing has become a growing concern within security. Past solutions, such as privacy screen protectors or alternative authentication methods like Passface \cite{liu_passface_2021} and Draw-a-Secret (DAS) \cite{nali_analyzing_2004}, have shown some success but often rely on hardware or suffer from poor long-term usability. These approaches can interrupt normal user behaviour or degrade the user experience allowing for an interest in a protection method that can integrate seamlessly into users’ everyday interactions.
 
+This paper introduces a gaze-based detection system as a productive solution to shoulder surfing. Implemented in Python, the system utilizes computer vision and gaze estimation techniques to monitor the presence of faces within a device’s camera view. When more than one face is detected and the user’s gaze is focused on the screen, the system triggers a subtle alert, such as screen dimming or an audio cue, to warn the user of a potential privacy threat.
+
+The primary aim of this project is to develop a lightweight, software-only solution that identifies shoulder surfing attempts in real-time without interrupting the user’s workflow. To achieve this, the system is designed to be unobtrusive, user-friendly, and adaptable across various public or shared environments. The objectives include:
+
+\begin{itemize}
+  \item Implementing face detection and gaze tracking techniques suitable for real-time use.
+  \item Designing a responsive user interface that allows users to customise detection sensitivity and feedback settings.
+  \item Evaluating the system’s accuracy, usability, and effectiveness through controlled user studies.
+  \item Iteratively refining the system based on user feedback and performance data.
+\end{itemize}
+
+These goals reflect a focus on practical usability as well as technical reliability, positioning the system at the intersection of computer vision, human-computer interaction, and privacy-aware design. This paper presents a review of related work, details the design and implementation of the system, and evaluates its performance and user experience through a structured study to offer a novel approach to mitigate shoulder surfing attacks.
 
 \section{Related Work}
 \label{sec:Related Work} 
@@ -246,7 +255,7 @@ Image \ref{fig:face_a} shows how more than one face can be identified at once wh
 \centering
 \fbox{\includegraphics[width=.3\textwidth]{img/facial-landmarks.png}\hfill}
 
-\caption{68 facial landmarks (2018).}
+\caption{68 facial landmarks model as part of the dlib library \cite{noauthor_dlib_nodate}. }
 \label{fig:facial-landmarks}
 \end{figure}
 
@@ -385,6 +394,57 @@ Several challenges arose during development:
 \end{itemize}
 
 These technical improvements ensured the system remained responsive, lightweight, and practical for everyday use. The implementation phase demonstrated the feasibility of real-time, ambient shoulder surfing detection using accessible, open-source tools.
+
+\section{Evaluation}
+
+\subsection{Overview of Evaluation Approach}
+
+To assess the effectiveness and usability of the shoulder surfing detection system, a user study was conducted. The aim was to evaluate both the technical performance of the detection algorithm and the user experience when interacting with the system in realistic scenarios. The study focused on identifying false positives, false negatives, and overall detection accuracy, while also capturing participant perceptions of usability, intrusiveness, and effectiveness.
+
+The evaluation followed a two-stage approach. The first involved testing the initial prototype, which relied solely on YOLO-based person detection, while the second focused on the refined system that integrated gaze tracking using dlib. Feedback and performance results from the first stage directly informed improvements made in the second prototype.
+
+\subsection{Study Design}
+The study included 16 participants with varying levels of technical expertise. Each participant was asked to complete a series of tasks involving the entry of sensitive information (e.g., email, PIN, passwords) on a laptop configured with the detection system. Scenarios were designed to reflect different real-world conditions, including variations in lighting (bright, dim, dark) and observer angles (behind, side, diagonal).
+
+A confederate was positioned to simulate shoulder surfing in pre-determined scenarios, while participants were informed that potential observers might appear during the study. System responses—such as whether an alert was triggered and whether the screen dimmed—were recorded along with system logs tracking detection events.
+
+\subsection{Evaluation Metrics}
+To evaluate system performance, the following metrics were used:
+
+Detection Accuracy: Number of correctly identified shoulder surfing events versus the total number of actual events.
+
+False Positives: Incidents where the system incorrectly flagged a threat.
+
+False Negatives: Missed detection of an actual shoulder surfing attempt.
+
+Usability Ratings: Participant ratings on ease of use, intrusiveness, and perceived effectiveness.
+
+\subsection{Results}
+Results from Prototype 1 revealed several limitations. While YOLO reliably detected the presence of additional individuals in the frame, it often triggered alerts even when observers were not looking at the screen. This led to a relatively high rate of false positives, particularly in crowded environments or when multiple people passed behind the user. Detection accuracy was moderate, and usability ratings were mixed, with some participants finding the system unnecessarily disruptive.
+
+In contrast, the refined prototype incorporating gaze tracking significantly reduced false positives. By combining presence detection with eye-tracking logic, the system only triggered alerts when the user's gaze was confirmed on the screen and another person was present. This reduced unnecessary interruptions and improved user trust. Participants reported a higher sense of security and appreciated the ambient nature of the alerts (screen dimming and soft audio cues).
+
+Quantitatively, the final system achieved a notable increase in detection accuracy, with most participants agreeing that the system alerted them appropriately during simulated attacks. False negatives were rare, though a few instances occurred under poor lighting conditions or extreme viewing angles. The usability feedback was largely positive: participants described the interface as easy to use, and most reported that the system did not interfere with their tasks.
+
+\subsection{Post-Study Survey Findings}
+The post-study survey collected both quantitative and qualitative feedback. Most participants rated the system highly in terms of effectiveness, with over two-thirds indicating they would use a similar system in real-life scenarios. Users appreciated the passive design and found the visual dimming to be less distracting than auditory alerts alone.
+
+When asked about improvements, common suggestions included greater control over alert sensitivity and the option to disable audio cues in quiet environments. Some participants also requested visual feedback showing why an alert was triggered—such as an icon or message confirming detection.
+
+\subsection{Analysis and Interpretation}
+The results indicate that combining presence detection with gaze estimation provides a more robust and user-friendly approach to shoulder surfing prevention. The key insight is that context-aware logic—evaluating both the environment and the user's behaviour—can substantially reduce unnecessary system activations. The modularity of the design also allows for future integration of more advanced gaze tracking methods or environmental sensors.
+
+Participants valued the system most in public or semi-public spaces, where awareness of onlookers is often reduced. Although detection performance declined slightly under low lighting conditions, the core functionality remained reliable across most test scenarios.
+
+\subsection{Limitations}
+The evaluation study was limited by the sample size and the artificial nature of the testing environment. While every effort was made to simulate realistic use, participants may have behaved differently knowing they were being observed. The webcam hardware also restricted the field of view and resolution, potentially affecting detection at wider angles or greater distances.
+
+Additionally, the study primarily focused on short-term interaction. Future evaluations should explore long-term use, user fatigue, and adaptation to ambient feedback over extended periods.
+
+\subsection{Summary}
+The evaluation demonstrates that the final prototype successfully addressed many of the weaknesses found in the initial design. By incorporating gaze awareness and refining the detection logic, the system achieved both higher accuracy and improved user satisfaction. These results support the viability of real-time, software-only shoulder surfing detection systems in enhancing user privacy without compromising usability.
+
+\printbibliography 
 
 \clearpage\appendix
 
