@@ -340,12 +340,12 @@ M_{\text{bottom}} = \left( \frac{x_{48} + x_{47}}{2}, \frac{y_{48} + y_{47}}{2} 
 \text{Vertical Line}_{\text{right}} = \overline{M_{\text{top}}M_{\text{bottom}}}
 \]
 
-This calculation is mirrored for the left eye using landmarks \( P_{37} \) through \( P_{42} \). A visal graphic is shown in figure \ref{fig:eye_calc} to help understand where the points are located in real life. In the system, these lines are visualised on the video frame to assist with approximate gaze direction detection. A code snippet of these calculations put into practice are provided in appendix \ref{app:gaze_calcs}.
+This calculation is mirrored for the left eye using landmarks \( P_{37} \) through \( P_{42} \). A visual graphic is shown in figure \ref{fig:eye_calc} to help understand where the points are located in real life. In the system, these lines are visualised on the video frame to assist with approximate gaze direction detection. A code snippet of these calculations put into practice are provided in appendix \ref{app:gaze_calcs}.
 
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.8\linewidth]{img/Eye_calc.jpg}
+    \includegraphics[width=0.6\linewidth]{img/Eye_calc.jpg}
     \caption{Graphic to show key eye point landmark calculations taken from the 68-point landmarks used to detect and track gaze direction in the system.}
     \label{fig:eye_calc}
 \end{figure}
@@ -397,16 +397,58 @@ These technical improvements ensured the system remained responsive, lightweight
 
 \section{Evaluation}
 
-\subsection{Overview of Evaluation Approach}
+\subsection{Study Objectives}
 
 To assess the effectiveness and usability of the shoulder surfing detection system, a user study was conducted. The aim was to evaluate both the technical performance of the detection algorithm and the user experience when interacting with the system in realistic scenarios. The study focused on identifying false positives, false negatives, and overall detection accuracy, while also capturing participant perceptions of usability, intrusiveness, and effectiveness.
 
-The evaluation followed a two-stage approach. The first involved testing the initial prototype, which relied solely on YOLO-based person detection, while the second focused on the refined system that integrated gaze tracking using dlib. Feedback and performance results from the first stage directly informed improvements made in the second prototype.
+The evaluation followed a two-stage approach where the first involved testing the initial prototype, which relied solely on YOLO-based person detection and the second focused on the refined system that integrated gaze tracking using dlib. Feedback and performance results from the first stage directly informed improvements made in the second prototype.
 
-\subsection{Study Design}
-The study included 16 participants with varying levels of technical expertise. Each participant was asked to complete a series of tasks involving the entry of sensitive information (e.g., email, PIN, passwords) on a laptop configured with the detection system. Scenarios were designed to reflect different real-world conditions, including variations in lighting (bright, dim, dark) and observer angles (behind, side, diagonal).
+Each study included:
+\begin{itemize}
+    \item Pre-task briefing and consent
+    \item Observation of system performance during tasks
+    \item Post-task questionnaire evaluating usability, perceived effectiveness, and overall trust
+\end{itemize}
 
-A confederate was positioned to simulate shoulder surfing in pre-determined scenarios, while participants were informed that potential observers might appear during the study. System responses—such as whether an alert was triggered and whether the screen dimmed—were recorded along with system logs tracking detection events.
+\subsection{Quantitative Results}
+
+\textbf{Detection Accuracy}
+
+Prototype 1, which used YOLO-based person detection, correctly identified the presence of multiple people but triggered frequent false positives. In contrast, Prototype 2, which used gaze tracking with face detection, significantly reduced false alerts while maintaining threat recognition.
+From system logs and manual observation:
+\begin{itemize}
+    \item Prototype 1: High detection rate but up to 40\% false positives
+    \item Prototype 2: Fewer false positives, improved confidence in alerts, and better contextual accuracy (when user gaze confirmed screen focus)
+\end{itemize}
+
+\textbf{Usability Scores (Post-Study Questionnaire Highlights)}
+
+Participants rated their experience across several metrics:
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Metric} & \textbf{Avg. Score (out of 5)} \\
+\hline
+Ease of use & 4.2 \\
+Perceived effectiveness & 4.4 \\
+Perceived security & 4.3 \\
+Interference with normal use & Low (most said “No”) \\
+\hline
+\end{tabular}
+\caption{Participant usability scores from the post-study questionnaire.}
+\label{tab:usability_scores}
+\end{table}
+
+Participants with prior experience of shoulder surfing rated the system’s usefulness slightly higher. Some noted that while occasional false alerts were acceptable, performance in dim lighting still posed a challenge.
+
+\textbf{Alert Feedback Accuracy}
+
+\begin{itemize}
+    \item Correct alerts: Most users reported receiving correct alerts during actual shoulder surfing.
+    \item Incorrect alerts: Prototype 1 had more false positives;
+    Prototype 2 showed improvement by cross-validating with gaze data.
+\end{itemize}
 
 \subsection{Evaluation Metrics}
 To evaluate system performance, the following metrics were used:
@@ -419,30 +461,17 @@ False Negatives: Missed detection of an actual shoulder surfing attempt.
 
 Usability Ratings: Participant ratings on ease of use, intrusiveness, and perceived effectiveness.
 
-\subsection{Results}
-Results from Prototype 1 revealed several limitations. While YOLO reliably detected the presence of additional individuals in the frame, it often triggered alerts even when observers were not looking at the screen. This led to a relatively high rate of false positives, particularly in crowded environments or when multiple people passed behind the user. Detection accuracy was moderate, and usability ratings were mixed, with some participants finding the system unnecessarily disruptive.
+\subsection{Discussion}
 
-In contrast, the refined prototype incorporating gaze tracking significantly reduced false positives. By combining presence detection with eye-tracking logic, the system only triggered alerts when the user's gaze was confirmed on the screen and another person was present. This reduced unnecessary interruptions and improved user trust. Participants reported a higher sense of security and appreciated the ambient nature of the alerts (screen dimming and soft audio cues).
+The results of the evaluation reveal several key insights into the viability and effectiveness of the proposed shoulder surfing detection system. Most notably, the integration of gaze tracking in Prototype 2 significantly enhanced the contextual awareness of the system, leading to improved accuracy and a reduction in false positives. This demonstrates the importance of not only detecting the presence of potential observers but also assessing the user’s attentional focus as an additional input.
 
-Quantitatively, the final system achieved a notable increase in detection accuracy, with most participants agreeing that the system alerted them appropriately during simulated attacks. False negatives were rare, though a few instances occurred under poor lighting conditions or extreme viewing angles. The usability feedback was largely positive: participants described the interface as easy to use, and most reported that the system did not interfere with their tasks.
+Participants responded positively to the system’s unobtrusive feedback mechanisms, particularly the use of screen dimming as a subtle alert. This aligns with prior research in HCI that emphasises the effectiveness of calm, ambient interaction methods. Users appreciated that the system responded without requiring active input, maintaining their workflow while still providing a sense of control.
 
-\subsection{Post-Study Survey Findings}
-The post-study survey collected both quantitative and qualitative feedback. Most participants rated the system highly in terms of effectiveness, with over two-thirds indicating they would use a similar system in real-life scenarios. Users appreciated the passive design and found the visual dimming to be less distracting than auditory alerts alone.
+The usability ratings across both prototypes show a clear trajectory of improvement, with the second iteration benefiting from both interface refinements and a more intelligent detection logic. The post-study feedback suggests that most participants would consider using such a system in real-world contexts, especially in shared office spaces or on public transport.
 
-When asked about improvements, common suggestions included greater control over alert sensitivity and the option to disable audio cues in quiet environments. Some participants also requested visual feedback showing why an alert was triggered—such as an icon or message confirming detection.
+However, limitations were identified. The system’s performance under low-light conditions was less reliable, indicating a need for improved lighting compensation or alternative sensing methods such as infrared. Additionally, the detection range was constrained by the webcam’s field of view and resolution, occasionally missing distant onlookers or those at extreme angles.
 
-\subsection{Analysis and Interpretation}
-The results indicate that combining presence detection with gaze estimation provides a more robust and user-friendly approach to shoulder surfing prevention. The key insight is that context-aware logic—evaluating both the environment and the user's behaviour—can substantially reduce unnecessary system activations. The modularity of the design also allows for future integration of more advanced gaze tracking methods or environmental sensors.
-
-Participants valued the system most in public or semi-public spaces, where awareness of onlookers is often reduced. Although detection performance declined slightly under low lighting conditions, the core functionality remained reliable across most test scenarios.
-
-\subsection{Limitations}
-The evaluation study was limited by the sample size and the artificial nature of the testing environment. While every effort was made to simulate realistic use, participants may have behaved differently knowing they were being observed. The webcam hardware also restricted the field of view and resolution, potentially affecting detection at wider angles or greater distances.
-
-Additionally, the study primarily focused on short-term interaction. Future evaluations should explore long-term use, user fatigue, and adaptation to ambient feedback over extended periods.
-
-\subsection{Summary}
-The evaluation demonstrates that the final prototype successfully addressed many of the weaknesses found in the initial design. By incorporating gaze awareness and refining the detection logic, the system achieved both higher accuracy and improved user satisfaction. These results support the viability of real-time, software-only shoulder surfing detection systems in enhancing user privacy without compromising usability.
+Overall, the study demonstrates that integrating user-centred design with intelligent computer vision techniques can produce practical, usable solutions to everyday security concerns. The findings also highlight the value of iterative prototyping and user feedback in refining both technical functionality and user experience.
 
 \printbibliography 
 
