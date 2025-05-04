@@ -121,13 +121,13 @@ Shoulder surfing is the act of visually observing someone’s private screen int
 \section{Introduction}
 \label{sec:intro}
 
-As mobile computing becomes more embedded in daily life, individuals are more likely to interact with laptops, tablets, and smartphones in public or semi-public spaces such as cafes, libraries, offices, or public transport. This exposure increases security and privacy concerns including the risk of shoulder surfing, which is the act of observing someone else’s screen to gather privacy or sensitive information without their consent.
+As mobile computing becomes more embedded in daily life, individuals are more likely to interact with laptops, tablets, and smartphones in public spaces such as cafes, libraries, offices, or public transport. This exposure increases security and privacy concerns including the risk of shoulder surfing, which is the act of observing someone else’s screen to gather privacy or sensitive information without their consent.
 
 Shoulder surfing can occur both deliberately and inadvertently. In its deliberate form, an attack may position themselves behind or beside a victim to watch as they enter passwords, read sensitive emails, or access personal data. Inadvertent cases can involve passers-by or nearby users unintentionally glancing at a screen due to curiosity or proximity, still resulting in an invasion of privacy. Eiband et al. describes shoulder surfing as both a common and underestimated threat, particularly in environments where users are less aware of their surroundings \cite{eiband_understanding_2017}. Similarly, research by Aviv et al. demonstrates how observational attacks can be used to accurately extract PINs, swipe patterns, and alphanumeric passwords with minimal effort \cite{aviv_towards_2017}.
 
 The risk associated with shoulder surfing is not limited to password theft as attackers can also capture financial details, health records, business correspondence or even biometric data by simply watching a screen. As these attacks often require no technical skill and can be carried out using the naked eye or a camera, their easy method of attack makes them especially concerning \cite{block_impact_2010}. In addition, modern device screens with high brightness and wide viewing angles inadvertently help attackers by making the screen contents visible from wider perspectives.
 
-Given these risks, mitigating shoulder surfing has become a growing concern within security. Past solutions, such as privacy screen protectors or alternative authentication methods like Passface \cite{liu_passface_2021} and Draw-a-Secret (DAS) \cite{nali_analyzing_2004}, have shown some success but often rely on hardware or suffer from poor long-term usability. These approaches can interrupt normal user behaviour or degrade the user experience allowing for an interest in a protection method that can integrate seamlessly into users’ everyday interactions.
+Given these risks, mitigating shoulder surfing has become an important factor within security. Past solutions, such as privacy screen protectors or alternative authentication solutions such as Passface \cite{liu_passface_2021} and Draw-a-Secret (DAS) \cite{nali_analyzing_2004}, have shown some success but often rely on hardware or suffer from poor long-term usability. These approaches can interrupt normal user behaviour or degrade the user experience allowing for an interest in a protection method that can integrate easily into users’ everyday interactions.
 
 This paper introduces a gaze-based detection system as a productive solution to shoulder surfing. Implemented in Python, the system utilizes computer vision and gaze estimation techniques to monitor the presence of faces within a device’s camera view. When more than one face is detected and the user’s gaze is focused on the screen, the system triggers a subtle alert, such as screen dimming or an audio cue, to warn the user of a potential privacy threat.
 
@@ -140,7 +140,7 @@ The primary aim of this project is to develop a lightweight, software-only solut
   \item Iteratively refining the system based on user feedback and performance data.
 \end{itemize}
 
-These goals reflect a focus on practical usability as well as technical reliability, positioning the system at the intersection of computer vision, human-computer interaction, and privacy-aware design. This paper presents a review of related work, details the design and implementation of the system, and evaluates its performance and user experience through a structured study to offer a novel approach to mitigate shoulder surfing attacks.
+These objectives create a focus of the practical usability of the system whilst ensuring it is reliable enough to detect any potential threats. his paper presents a review of related work, details the design and implementation of the system, and evaluates its performance and user experience through a structured study to offer a novel approach to mitigate shoulder surfing attacks.
 
 \section{Related Work}
 \label{sec:Related Work} 
@@ -399,11 +399,12 @@ These technical improvements ensured the system remained responsive, lightweight
 
 \subsection{Study Objectives}
 
-To assess the effectiveness and usability of the shoulder surfing detection system, a user study was conducted. The aim was to evaluate both the technical performance of the detection algorithm and the user experience when interacting with the system in realistic scenarios. The study focused on identifying false positives, false negatives, and overall detection accuracy, while also capturing participant perceptions of usability, intrusiveness, and effectiveness.
+To assess the effectiveness and usability of the shoulder surfing detector, a user study was conducted. The aim was to evaluate both the algorithm used to detect people and the user experience when in different scenarios. The study focused on identifying false positives, false negatives, and overall detection accuracy, while also undersntanding the participants perceptions of usability and effectiveness.
 
-The evaluation followed a two-stage approach where the first involved testing the initial prototype, which relied solely on YOLO-based person detection and the second focused on the refined system that integrated gaze tracking using dlib. Feedback and performance results from the first stage directly informed improvements made in the second prototype.
+Two user studies were carried out where the first involved testing the initial prototype, which relied only on YOLO-based person detection and the second focused on the refined system that used gaze tracking via dlib. The results from the first user study were then used to improve the system and design which resulted in the second study being carried out.
 
-Each study included:
+A total of 20 participants took part in the study all with a range of technical experience levels and all followed the below structure:
+
 \begin{itemize}
     \item Pre-task briefing and consent
     \item Observation of system performance during tasks
@@ -420,6 +421,17 @@ From system logs and manual observation:
     \item Prototype 1: High detection rate but up to 40\% false positives
     \item Prototype 2: Fewer false positives, improved confidence in alerts, and better contextual accuracy (when user gaze confirmed screen focus)
 \end{itemize}
+
+After both user studies were conducted, statistical analysis was carried out using Likert-scale responses from the post-study questionnaire. Independent t-tests were used to compare the average scores across four metrics: ease of user, perceived effectiveness, perceived security and interference with normal use.
+
+The results showed a significant improvement in ease of use (p = 0.0051), showing that users found prototype 2 more intuitive that the first version. The most significant change was in interference with normal use (p < 0.0001), where users reported less disruptions in prototype 2 due to the more precise detection algorithm and live feedback. While perceived effectiveness also improved, the difference was not as significant (p = 0.0862), and perceived security remained high across both prototypes (p = 0.4800). To help visualise these results, a plot was created to show the distribution of ease of user ratings for both prototypes where the vertical lines represent the mean scores (see figure \ref{fig:t-test}). These results verified the hypothesis that the gaze tracking within the detection improves user satisfaction and reduces false system alerts.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1.0\linewidth]{img/ttest.png}
+    \caption{Graph the show the distribution of ease of user ratings from the user studies of both prototypes.}
+    \label{fig:t-test}
+\end{figure}
 
 \textbf{Usability Scores (Post-Study Questionnaire Highlights)}
 
@@ -442,37 +454,115 @@ Interference with normal use & Low (most said “No”) \\
 
 Participants with prior experience of shoulder surfing rated the system’s usefulness slightly higher. Some noted that while occasional false alerts were acceptable, performance in dim lighting still posed a challenge.
 
+\subsection{Qualitative Results}
+
+Open-ended responses revealed several key themes. Many users appreciated the ambient feedback system, such as the automatic screen dimming and audio alerts, describing these as non-intrusive and effective ways to gain attention without disrupting workflow. The system’s log panel also received positive feedback, with users commenting that it improved transparency and helped them understand why alerts had been triggered.
+
+However, not all feedback was positive. Some participants found that the system struggled in low-light conditions, where detection accuracy dropped noticeably. This limitation led to suggestions for future enhancements, such as incorporating infrared detection or adaptive brightness controls. In earlier iterations of the prototype, several users also expressed frustration with false alerts, though most acknowledged that these issues were largely resolved in the final version.
+
+Participant commentary reflected a range of experiences. One participant mentioned that the system would be particularly useful in shared workspaces where privacy concerns are heightened. Another noted that the system’s reliability improved their sense of security while working in public. These insights support the direction of the design improvements made between prototypes and highlight areas for further refinement.
+
+Example participant comments:
+
+“Helpful for work, especially in shared offices.”
+
+“Would be better if it handled dark rooms more reliably.”
+
+“False alerts were annoying in the earlier version.”
+
 \textbf{Alert Feedback Accuracy}
 
-\begin{itemize}
-    \item Correct alerts: Most users reported receiving correct alerts during actual shoulder surfing.
-    \item Incorrect alerts: Prototype 1 had more false positives;
-    Prototype 2 showed improvement by cross-validating with gaze data.
-\end{itemize}
+Participants were asked whether the alerts triggered during the tasks were correct. Most participants reported that alerts were appropriate and timely, particularly in Prototype 2. Prototype 1 had a higher rate of false positives due to its reliance solely on presence detection. In contrast, Prototype 2 demonstrated a more refined approach by validating presence with gaze data, significantly reducing the number of incorrect alerts.
 
-\subsection{Evaluation Metrics}
-To evaluate system performance, the following metrics were used:
 
-Detection Accuracy: Number of correctly identified shoulder surfing events versus the total number of actual events.
+\subsection{Summary of findings}
 
-False Positives: Incidents where the system incorrectly flagged a threat.
+\begin{table}[h]
+\centering
+\caption{Comparison of Prototype 1 and 2 Based on Key Performance Features}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Feature} & \textbf{Prototype 1 (YOLO)} & \textbf{Prototype 2 (YOLO + Gaze)} \\
+\hline
+Detection Speed & High & High \\
+False Positives & Frequent & Reduced \\
+Gaze Awareness & None & Present \\
+Usability Rating & Moderate & High \\
+User Control / Settings & None & Full GUI \\
+\hline
+\end{tabular}
+\label{tab:prototype_comparison}
+\end{table}
 
-False Negatives: Missed detection of an actual shoulder surfing attempt.
+Prototype 2 demonstrated a significant improvement in both perceived and actual performance, validating the decision to incorporate gaze tracking. It maintained system responsiveness while reducing false positives and increasing user trust.
 
-Usability Ratings: Participant ratings on ease of use, intrusiveness, and perceived effectiveness.
+\subsection{Eight Golden Rules of Interface Design}
+
+To further assess the project with design principles, the system was evaluated against Shneiderman’s Eight Golden Rules of Interface Design \cite{}. The following table outlines how each principle was considered throughout the system’s development:
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Principle} & \textbf{Comments} \\
+\hline
+Strive for consistency & The system remains consistent by keeping the layout, button placement and colour themes the same throughout. This contributed to good usability scores and positive feedback during user studies. \\
+\hline
+Enable frequent users to use shortcuts & Although there are no keyboard shortcuts which may have been beneficial on reflection, settings are able to be preserved between sessions to allow users to operate the system more efficiently. \\
+\hline
+Offer informative feedback & Feedback was clearly communicated through system logs and alerts, allowing users to understand when and why alerts were triggered. \\
+\hline
+Design dialogue to yield closure & User uncertainty and cognitive load has been reduced by adding visual confirmation like button colour change once pressed and log messages to highlight what’s happening. \\
+\hline
+Offer simple error handling & While no large errors occurred during testing, users had control to stop detection or adjust sensitivity, offering a straightforward way to correct issues such as false alerts. \\
+\hline
+Permit easy reversal of actions & Users could immediately reverse detection or notification settings without penalty which allowed flexibility allowed trial-and-error usage without the fear of irreversible actions. \\
+\hline
+Support internal locus of control & The design gave users with direct control over all system functions, such as starting/stopping detection and adjusting thresholds, which reinforced confidence in the use of the system. \\
+\hline
+Reduce short-term memory load & The clear labelling of controls, feedback logs, and minimal need for user recall allowed for a fluid experience, especially for novice users who may be unsure. \\
+\hline
+\end{tabularx}
+\caption{Evaluation categorised into the Eight Golden Rules of Interface Design \cite{} }
+\end{table}
 
 \subsection{Discussion}
 
-The results of the evaluation reveal several key insights into the viability and effectiveness of the proposed shoulder surfing detection system. Most notably, the integration of gaze tracking in Prototype 2 significantly enhanced the contextual awareness of the system, leading to improved accuracy and a reduction in false positives. This demonstrates the importance of not only detecting the presence of potential observers but also assessing the user’s attentional focus as an additional input.
+The user study allowed for insights into how the system preformed and the overall success of the project. Both technical aspects and how the user interacted with the system were assessed and compared to the objectives discussed at the start of this paper:
 
-Participants responded positively to the system’s unobtrusive feedback mechanisms, particularly the use of screen dimming as a subtle alert. This aligns with prior research in HCI that emphasises the effectiveness of calm, ambient interaction methods. Users appreciated that the system responded without requiring active input, maintaining their workflow while still providing a sense of control.
+\begin{itemize}
+  \item Implementing face detection and gaze tracking techniques suitable for real-time use.
+  \item Designing a responsive user interface that allows users to customise detection sensitivity and feedback settings.
+  \item Evaluating the system’s accuracy, usability, and effectiveness through controlled user studies.
+  \item Iteratively refining the system based on user feedback and performance data.
+\end{itemize}
 
-The usability ratings across both prototypes show a clear trajectory of improvement, with the second iteration benefiting from both interface refinements and a more intelligent detection logic. The post-study feedback suggests that most participants would consider using such a system in real-world contexts, especially in shared office spaces or on public transport.
+It was decided that whilst the first prototype was able to detect multiple individuals within the camera view, the number false positives was too high meaning the detection was not accurate enough. The second prototype improved this by using eye gaze calculations in order to detect the presence of another person. Usability feedback from the user study also helped improve the interface allowing for a critical evaluation against Norman’s principles of interaction design \cite{} above (see figure \ref{}).
 
-However, limitations were identified. The system’s performance under low-light conditions was less reliable, indicating a need for improved lighting compensation or alternative sensing methods such as infrared. Additionally, the detection range was constrained by the webcam’s field of view and resolution, occasionally missing distant onlookers or those at extreme angles.
+The second prototype also incorporated a more user-friendly GUI to ensure Shneiderman’s “visibility of system status” and “user control” principles \cite{} were considered. For example, feedback was more informative by producing an output log formatted in an appropriate was and optional settings that the user could remain in control of. The user study helped produce this idea and the second user study helped verify that both novice and expert users found the system more intuitive.
 
-Overall, the study demonstrates that integrating user-centred design with intelligent computer vision techniques can produce practical, usable solutions to everyday security concerns. The findings also highlight the value of iterative prototyping and user feedback in refining both technical functionality and user experience.
+Despite these improvements, some limitations were identified such as how the system still struggled in low-light settings meaning its effectiveness was reduced and more false negatives occurred. Additionally, the reliance on eye landmarks made the detection less beneficial when users were angled slightly away or were wearing glasses. It could be suggested that further work into using hardware like infrared or wide-angle cameras would help mitigate these issues caused as the software would be able to detect at a wide range or the position of the user compared to the screen.
 
+Though limitations were identified, the user studies abled us to significantly improve the system and consider areas that had not be thoroughly thought about. The quantitative results clearly highlighted an increase of usability and how the system can be integrated into daily life which was identified as a core objective in the project.
+
+\section{Conclusion}
+
+This research set out to address the problem of shoulder surfing — a subtle but significant privacy threat when using digital devices in public or shared spaces. The proposed system aimed to mitigate this risk using a novel combination of object detection and gaze tracking, wrapped in a user-friendly and minimally intrusive interface.
+
+The development and evaluation of two successive prototypes demonstrated meaningful progress. Prototype 1, built using YOLO-based detection, served as a functional baseline but suffered from high false-positive rates. In contrast, Prototype 2 combined dlib’s facial landmark tracking with contextual gaze estimation, improving both the accuracy of detection and user satisfaction. The introduction of visual and auditory alerts, along with a customisable GUI, further enhanced user control and confidence.
+
+User studies and statistical analysis confirmed that the refined system achieved key goals: it was easier to use, more accurate in identifying genuine threats, and less disruptive to normal activity. These outcomes reflect the strength of the iterative, user-centred design process that informed the project.
+
+Nevertheless, limitations remain. Performance was still affected by environmental lighting, and the use of a standard webcam restricted detection range. With more time or access to hardware like infrared cameras or dedicated eye trackers, further improvements in robustness and precision could be achieved.
+
+In conclusion, the system offers a promising software-based solution to shoulder surfing that respects user autonomy and blends security with usability — contributing to both the technical and HCI-driven understanding of privacy-preserving interfaces.
+
+
+
+Prototype 2 demonstrated a significant improvement in both perceived and actual performance, validating the decision to incorporate gaze tracking. It maintained system responsiveness while reducing false positives and increasing user trust.
+
+
+\newpage
 \printbibliography 
 
 \clearpage\appendix
