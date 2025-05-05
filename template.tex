@@ -145,19 +145,17 @@ These objectives create a focus of the practical usability of the system whilst 
 \section{Related Work}
 \label{sec:Related Work} 
 
-Shoulder surfing is an increasingly prevalent issue. The occurrence of shoulder surfing is not limited to malicious attacks, it also includes unintentional glances and peeking out of interest. Research by Eiband et al. (2017) demonstrates that shoulder-surfing is commonplace, especially on public transportation and in communal environments. Their study suggests that users often lack awareness of being observed and generally underestimate the risk. Similarly, studies by Aviv et al. (2017) and De Luca et al. (2014) show how attackers can retrieve PINs and passwords through observational techniques, emphasising the urgency of practical mitigation strategies.
+Shoulder surfing is when an attacker gains access to sensitive information by observing a user’s screen typically from behind and over the shoulder \cite{long_no_2011}. Initially linked to observing ATM PIN entries in the 1990s \cite{anderson_security_2001}, the threat has developed to encompass a range of interactions including password entering, online banking access and email writing. As the use of devices in public spaces increases, the risk of shoulder surfing becomes more common, particularly as users are often unaware of these threats.
 
-The earliest responses to shoulder surfing have been physical: privacy filters and screen covers (Lian et al. 2013). These accessories reduced the screen’s visibility angle to deter side glances from others. However, they also reduce usability for the primary user, especially in shared or collaborative settings. Something more about physical defences... 
+Studies have shown how simple shoulder surfing attacks are to carry out. For example, research by Aviv et al. demonstrated that attackers could duplicate mobile unlock patterns after a quick visual glance \cite{aviv_towards_2017}, while Eiband et al. found that participants were able to memorise and reproduce PINs and patterns observed from a small distance \cite{eiband_understanding_2017}. It was found that the likelihood of an attack depends on the input type such as numeric keypads and patten locks are at higher risk compared to alphanumeric passwords as they are more predictable \cite{tari_comparison_2006}.
 
-Something about software-based defences. For example, Wiedenbeck et al. (2005) evaluated the DAS (Draw-a-secret) approach, while Tari et al. (2006) explored PIN-entry systems that reduce predictability. Though promising, these methods often compromise efficiency and are reflected by users for being cumbersome (Kroeze & Olivier, 2008).
+To prevent shoulder surfing, a range of mitigation techniques have been suggested. One of the easiest ways is for users to change their behaviours to be aware of their surroundings and shield their input \cite{brudy_is_2014}, this however has its downfalls are users frequently underestimate the threat. As a development, researched have attempted to improve user interfaces to make input less observable. For instance, randomised keyboards for password entry have been developed to prevent attackers from learning passwords based on finger movements \cite{tan_spy-resistant_2005}. Similarly, Bianchi et al. proposed "ColorPIN", which combines colours and digits is an shifting layout to obscure inputs \cite{de_luca_colorpin_2010}. These methods can help reduce the opportunities that shoulder surfers have but have an impact on the usability of the device which may confuse the user.
 
-Computer vision techniques have gained traction for dynamic user-aware defences. Brudy et al. (2014) introduced methods to detect onlookers in the context of public displays, while Khamis et al. (2016) explored gaze-based user interfaces that adapt to attention shifts. Real-time face detection, such as YOLO (You-Only-Look-Once)(Redmon et al. 2016), provides a fast and accurate way to identify multiple individuals in a frame. Insert YOLO facts here. This will be further discussed.
+Other past solutions into mitigating shoulder surfing have focused on using biometric authentication, such as fingerprint or facial recognition which do not rely on direct inputs. While good at increasing privacy, they cannot be reset like passwords once compromised making breaches potentially more damaging \cite{jain_introduction_2011}. Hardware solutions such as privacy screen filters that reduce visibility to anyone not viewing from a straight angle have been proposed and used by many people. While these can help mitigate casual observation, they are unable to protect against attackers with cameras or those who are positioned strategically to view the screen \cite{eiband_understanding_2017}. In addition, these filters can reduce screen visibility for the main users which can be annoying in low-light environments and for users with visual impairments \cite{khan_usability_2015}.
 
-Gaze interaction has been increasingly used not only for input but also for context awareness and security. Holland and Komogortsev (2012) demonstrated that haze can be used for continuous authentication, while Kumar et al. (2007) showed gaze patterns can distinguish between users. Recent work by Liu et al. (2007) investigates how gaze cues can signal environmental risks without interrupting primary tasks. Such ambient strategies align closely with Weiser and Brown’s (1996) concept of calm technology interfaces that remain in the background until needed.
+Work has also been carried out on more dynamic solutions such as systems that make use of a front-facing camera or sensors, alerting users when an observer is detected \cite{bace_privacyscout_2022},\cite{brudy_is_2014}. Augmented reality has also been explored as a solution \cite{corbett_shouldar_2024} but provides limitations due to the complexity and cost of implementation.
 
-Something about UX. Research by Cranor and Garfinkel (2005) and more recent works by Nappa et al. (2019) confirm that users resist tools that are overly intrusive or complex. This proves that the most effective solutions are those that operate passively, offer user control and integrate smoothly into daily workflows.
-
-Our system stands in the intersection of these lines of research. It bridges the high-performance detection with subtle, user-oriented alerts, guided by formative research in UX and informed by the limitations of past solutions.
+While a number of studies have taken place to find solution to mitigate shoulder surfing, most of these systems come with trade-offs such as usability and practicality. Physical defences offer protection but are unable to alter for different situations while software-based techniques do not focus on the user experience.
 
 \section{System Design}
 \label{sec:system design}
@@ -172,9 +170,9 @@ The system uses a live video input combined with a gaze tracking algorithm to de
 \subsubsection{Human-Centred Design and UX Principles}
 \label{HCI}
 
-The system was designed following Human-Computer Interaction (HCI) principles, with a particular focus on Nielsen’s usability heuristics and Don Norman’s principles of design. Rather than overwhelming users with intrusive pop-ups or constant alerts, the system alights with Norman’s idea of making important system state visible and providing natural mappings between intentions and outcomes. It was ensured that feedback is delivered through screen dimming and subtle sounds which allow for clear communication without asking for unnecessary attention from the user.
+The system was designed following Human-Computer Interaction (HCI) principles, with a particular focus on Nielsen’s usability heuristics \cite{nielsen_usability_nodate} and Don Norman’s principles of design \cite{norman_design_1983}. Rather than overwhelming users with intrusive pop-ups or constant alerts, the system alights with Norman’s idea of making important system state visible and providing natural mappings between intentions and outcomes \cite{norman_design_1983}. It was ensured that feedback is delivered through screen dimming and subtle sounds which allow for clear communication without asking for unnecessary attention from the user.
 
-The interface supports discoverability and feedback as per Norman’s principles by allowing adjustable settings that can be easily understood and controlled. The settings allow for the screen brightness when dimmed to be altered using a sliding bar and alert sounds can be toggled on and off. It was also ensured that the layout is simple by using minimal buttons, clear labels and consistent interaction patterns so that the user can easily use the system through recognition an have a minimal chance of making errors (Neiman, 2019).
+The interface supports discoverability and feedback as per Norman’s principles \cite{norman_design_1983} by allowing adjustable settings that can be easily understood and controlled. The settings allow for the screen brightness when dimmed to be altered using a sliding bar and alert sounds can be toggled on and off. It was also ensured that the layout is simple by using minimal buttons, clear labels and consistent interaction patterns so that the user can easily use the system through recognition an have a minimal chance of making errors \cite{nielsen_usability_nodate}.
 
 \subsubsection{Privacy and Local Processing}
 \label{privacy}
@@ -186,13 +184,13 @@ The system was built with privacy by design in mind, so all data processing occu
 
 The software works by capturing live video input using the OpenCV library, which provides an efficient way to access real-time video streams. Rather than storing video feeds, frames are processed in real time to identify potential shoulder surfers.
 
-For face detection, the system makes use of the dlib library’s Histogram of Oriented Gradients (HOG)-based face detector where detection speed and accuracy are computationally efficient to identify presence of more than one person. Upon detecting a face, the system applies dlib’s 68-point facial landmark model to identify specific points around the eyes needed for gaze estimation. 
+For face detection, the system makes use of the dlib library’s Histogram of Oriented Gradients (HOG)-based face detector \cite{noauthor_dlib_nodate} where detection speed and accuracy are computationally efficient to identify presence of more than one person. Upon detecting a face, the system applies dlib’s 68-point facial landmark model to identify specific points around the eyes needed for gaze estimation. 
 
 Using the key eye landmarks, the system estimates gaze direction through geometric calculations where points around the eye are used to decide whether the user is focused on the screen or not (see section 3.2.2 for a detail explanation of this). Detection logic is then used to identify a potential shoulder surfing threat when multiple faces are present, and the user’s gaze is focused on the screen.
 
 When a threat is detected, the system gives feedback to the user by dimming the screen using the screen\textunderscore brightness\textunderscore control library and plays an alert sound to attract the user’s attention. The user interface has been built with customtkinter which provides an interactive control panel that includes start and stop buttons, a live video preview and a log of recent detection events for transparency and usability. 
 
-In the initial prototype, YOLO (You Only Look Once) was used for person detection due to its high-speed object recognition, however in further development, this was replaced with dlib to enable integrated facial landmark tracking for gaze estimation. Justification for this is discussed further in the paper.
+In the initial prototype, YOLO (You Only Look Once) \cite{redmon_you_2016} was used for person detection due to its high-speed object recognition, however in further development, this was replaced with dlib to enable integrated facial landmark tracking for gaze estimation. Justification for this is discussed further in the paper.
 
 Figure~\ref{fig:architecture} demonstrates the flow of the system and how the architecture has been built in a modular way to allow for improvements and further research.
 
@@ -207,7 +205,7 @@ Figure~\ref{fig:architecture} demonstrates the flow of the system and how the ar
 \subsubsection{YOLO (You Only Look Once)}
 \label{YOLO}
 
-During early development of this project, an object detection algorithm called YOLO \textcolor{red}{ref here} was identified as a suitable method for detecting the presence of onlookers.
+During early development of this project, an object detection algorithm called YOLO \cite{redmon_you_2016} was identified as a suitable method for detecting the presence of onlookers.
 YOLO (You Only Look Once) is an object detection algorithm produced in 2015 by Redmon et al. which uses bounding boxes to predict the probability of what each object is \cite{redmon_you_2016}. The algorithm has been trained using the ImageNet dataset \cite{noauthor_imagenet_nodate} and can detect from traffic lights to toilets. The YOLO model splits each image into a grid and produces bounding boxes for each cell, a class probability is listed, and a confidence score is calculated. The class probability is the likelihood that each object belongs to each class (e.g. bottle, person, chair) and the confidence is the likelihood that there is an object in that cell \cite{redmon_you_2016}. An overall confidence score can then be calculated and produced to the user using the formula: 
 \[
   Confidence = Object Confidence Score \times Class Probability
@@ -249,7 +247,7 @@ However, it was discovered after user studies and testing that YOLO's limitation
 \subsubsection{Eye detection using dlib}
 \label{dlib}
 
-To enable gaze-based detection, dlib was identified as an appropriate solution for its efficient face detection and facial landmark prediction capabilities. Dlib is an open-source software library (King, 2019) including 68-point facial landmark detection model (see figure \ref{fig:facial-landmarks}) that is based on the Histogram of Oriented Gradients (HOG) combined with a linear support vector machine (SVM) which allows for effective detection of faces within the camera (Kazemi & Sullivan, 2014).
+To enable gaze-based detection, dlib was identified as an appropriate solution for its efficient face detection and facial landmark prediction capabilities. Dlib is an open-source software library \cite{noauthor_dlib_nodate} including 68-point facial landmark detection model (see figure \ref{fig:facial-landmarks}) that is based on the Histogram of Oriented Gradients (HOG) combined with a linear support vector machine (SVM) which allows for effective detection of faces within the camera \cite{kazemi_one_2014}.
 
 The shape predictor in dlib uses multiple regression trees to detect facial landmarks including the eyes, nose and mouth. The model was identified as useful for this project due the accurate feature recognition of multiple people at once allowing for gaze estimations to be calculated.
 
@@ -300,7 +298,7 @@ Together, these models formed the core detection strategies used during prototyp
 \subsection{Overview}
 \label{imp_overview}
 
-The implementation of the shoulder surfing detection system was produced using a user-centred, iterative development process. The system was built using Python due to its accessibility and wide library support \textcolor{red}{ref here}. The main libraries used include OpenCV \textcolor{red}{ref here} for real-time webcam capture, dlib \textcolor{red}{ref here} for face and landmark detection, and customtkinter \textcolor{red}{ref here} for building the graphical user interface. Testing and development were conducted on a Macbook with a 720p FaceTime HD webcam, although the software was designed to operate cross-platform where possible.
+The implementation of the shoulder surfing detection system was produced using a user-centred, iterative development process. The system was built using Python due to its accessibility and wide library support \cite{chen_study_2017}. The main libraries used include OpenCV \cite{culjak_brief_2012} for real-time webcam capture, dlib \cite{noauthor_dlib_nodate} for face and landmark detection, and customtkinter for building the graphical user interface. Testing and development were conducted on a Macbook with a 720p FaceTime HD webcam, although the software was designed to operate cross-platform where possible.
 The development was structured into two major phases where the initial prototype relied solely on person detection using YOLO, while the final version incorporated gaze estimation using dlib’s facial landmark detection. This section describes each phase, the system’s interface and the reasons behind decisions made.
 
 \subsection{Prototype 1: YOLO-Based Detection}
@@ -308,7 +306,7 @@ The development was structured into two major phases where the initial prototype
 
 The first version featured a basic graphical user interface (GUI), consisting only of a start and stop controls hardcoded into the script with no adjustable settings or real-time feedback provided to the user. While this minimal interface was sufficient for testing, it lacked the usability features required for regular, user-friendly operation.
 
-In this version, the YOLOv8 model for person detection was used due to its ability to detect multiple people at high speed (up to 45 FPS) making is a strong algorithm to help identify the presence of potential shoulder surfers in real time. The model was integrated into the system through the Ultralytics Python interface \textcolor{red}{ref here} and connected to the webcam feed via OpenCV.
+In this version, the YOLOv8 model for person detection was used due to its ability to detect multiple people at high speed (up to 45 FPS) making is a strong algorithm to help identify the presence of potential shoulder surfers in real time. The model was integrated into the system through the Ultralytics Python interface \cite{kukartsev_deep_2024} and connected to the webcam feed via OpenCV.
 
 The initial logic flagged a potential threat if more than one person was detected within the frame. If this condition was met, the system dimmed the screen and played an audio warning using the playsound library. It was clear from user studies (see section \ref{evaluation}) that while the prototype was effective in detecting people at varying distances and angles, it lacked the ability to recognise whether the user was actually being observed causing false positives especially in busier environments.
 
@@ -356,7 +354,7 @@ M_{\text{bottom}} = \left( \frac{x_{48} + x_{47}}{2}, \frac{y_{48} + y_{47}}{2} 
 This calculation is mirrored for the left eye using landmarks \( P_{37} \) through \( P_{42} \). A visual graphic is shown in figure \ref{fig:eye_calc} to help understand where the points are located in real life. In the system, these lines are visualised on the video frame to assist with approximate gaze direction detection. A code snippet of these calculations put into practice are provided in appendix \ref{app:gaze_calcs}.
 
 
-\begin{figure}[h!]
+\begin{figure}
     \centering
     \includegraphics[width=0.6\linewidth]{img/Eye_calc.jpg}
     \caption{Graphic to show key eye point landmark calculations taken from the 68-point landmarks used to detect and track gaze direction in the system.}
@@ -376,9 +374,9 @@ Controls include:
   \item Log panel: Displays recent events for transparency and trust.
 \end{itemize}
 
-The layout adheres to Don Norman’s usability principles by providing clear feedback, discoverability, and user control. Default settings were chosen for general usability but are customisable for different environments.
+The layout adheres to Don Norman’s usability principles by providing clear feedback, discoverability, and user control \cite{norman_design_1983}. Default settings were chosen for general usability but are customisable for different environments.
 
-\begin{figure}[h!]
+\begin{figure}
   \centering
   \begin{subfigure}[b]{0.45\textwidth}
     \centering
@@ -497,7 +495,7 @@ Prototype 2 demonstrated a significant improvement in both perceived and actual 
 \subsection{Eight Golden Rules of Interface Design}
 \label{8_golden_rules}
 
-To further assess the project with design principles, the system was evaluated against Shneiderman’s Eight Golden Rules of Interface Design \cite{}. Table \ref{golden_rules} outlines how each principle was considered throughout the system’s development.
+To further assess the project with design principles, the system was evaluated against Shneiderman’s Eight Golden Rules of Interface Design \cite{ben_shneiderman_ben_nodate}. Table \ref{golden_rules} outlines how each principle was considered throughout the system’s development.
 
 \begin{table}[h!]
 \centering
@@ -522,9 +520,19 @@ Support internal locus of control & The design gave users direct control over al
 Reduce short-term memory load & The clear labelling of controls, feedback logs, and minimal need for user recall allowed for a fluid experience, especially for novice users who may be unsure. \\
 \hline
 \end{tabularx}
-\caption{Evaluation categorised into the Eight Golden Rules of Interface Design \cite{} }
+\caption{Evaluation categorised into the Eight Golden Rules of Interface Design \cite{ben_shneiderman_ben_nodate}.}
 \label{golden_rules}
 \end{table}
+
+\subsection{Critical Analysis}
+
+Reflecting on the process of the project, there were a number of decisions that could have been made to improve the work. For example, the easy development focused on person detection using YOLO, which while useful, it lacked the preciseness needed. In hindsight, introducing the gaze tracking earlier could have made the development more efficient and led to a chance for more detail user studies and improvements.
+
+The project risks were mainly related to environmental variables like lighting conditions. While the system performed reliably in bright and well-lit environments, its accuracy decreased in darker places. This highlights the limitation that basic built-in webcams have, whilst they are more accessible, they lack advanced technology which would improve the system.
+
+Time constraints meant that some features were introduced late, such as real-time logs and adaptive UI controls. If implemented earlier, these features could have improved usability testing and reduced the number of times the code was altered. Additionally, a wider range of public settings could have been tested during user studies to test edge cases and fine-tune the logic to suit most environments.
+
+Future improvements could include integrating with infrared or depth-sensing cameras for better performance in poor lighting. The gaze tracking model could also be developed by training it on multiple use cases to advance the detection. These would not only enhance detection but also make the system more deployable in different situations.
 
 \subsection{Discussion}
 \label{discussion}
@@ -538,9 +546,9 @@ The user study allowed for insights into how the system preformed and the overal
   \item Iteratively refining the system based on user feedback and performance data.
 \end{itemize}
 
-It was decided that whilst the first prototype was able to detect multiple individuals within the camera view, the number of false positives was too high meaning the detection was not accurate enough. The second prototype improved this by using eye gaze calculations in order to detect the presence of another person. Usability feedback from the user study also helped improve the interface allowing for a critical evaluation against Norman’s principles of interaction design \cite{} above (see figure \ref{golden_rules}).
+It was decided that whilst the first prototype was able to detect multiple individuals within the camera view, the number of false positives was too high meaning the detection was not accurate enough. The second prototype improved this by using eye gaze calculations in order to detect the presence of another person. Usability feedback from the user study also helped improve the interface allowing for a critical evaluation against Norman’s principles of interaction design \cite{norman_design_1983} above (see figure \ref{golden_rules}).
 
-The second prototype also incorporated a more user-friendly GUI to ensure Shneiderman’s “visibility of system status” and “user control” principles \cite{} were considered. For example, feedback was more informative by producing an output log formatted in an appropriate way and optional settings that the user could remain in control of. The user study helped produce this idea and the second user study helped verify that both novice and expert users found the system more intuitive.
+The second prototype also incorporated a more user-friendly GUI to ensure Shneiderman’s “visibility of system status” and “user control” principles \cite{ben_shneiderman_ben_nodate} were considered. For example, feedback was more informative by producing an output log formatted in an appropriate way and optional settings that the user could remain in control of. The user study helped produce this idea and the second user study helped verify that both novice and expert users found the system more intuitive.
 
 Despite these improvements, some limitations were identified such as how the system still struggled in low-light settings meaning its effectiveness was reduced and more false negatives occurred. Additionally, the reliance on eye landmarks made the detection less beneficial when users were angled slightly away or were wearing glasses. It could be suggested that further work into using hardware like infrared or wide-angle cameras would help mitigate these issues caused as the software would be able to detect at a wider range or the position of the user compared to the screen.
 
@@ -549,18 +557,15 @@ Though limitations were identified, the user studies abled us to significantly i
 \section{Conclusion}
 \label{conclusion}
 
-This research set out to address the problem of shoulder surfing — a subtle but significant privacy threat when using digital devices in public or shared spaces. The proposed system aimed to mitigate this risk using a novel combination of object detection and gaze tracking, wrapped in a user-friendly and minimally intrusive interface.
+This paper set out to find an appropriate way to mitigate shoulder surfing attacks. The proposed system aimed to reduce this risk using an eye tracking algorithm alongside a user-friendly interface.
 
-The development and evaluation of two successive prototypes demonstrated meaningful progress. Prototype 1, built using YOLO-based detection, served as a functional baseline but suffered from high false-positive rates. In contrast, Prototype 2 combined dlib’s facial landmark tracking with contextual gaze estimation, improving both the accuracy of detection and user satisfaction. The introduction of visual and auditory alerts, along with a customisable GUI, further enhanced user control and confidence.
+The development and evaluation of two prototypes demonstrated progress over the project where improvements were made and analysed with user studies to verify thoughts. Prototype 1 was built using YOLO-based detection and allowed for a structure of the system to be made but the number of false-positives led to a reconsideration of what algorithm was used. Prototype 2 combined dlib’s facial landmark tracking with gaze estimation put into context to improve both the accuracy and user satisfaction of the system.
 
-User studies and statistical analysis confirmed that the refined system achieved key goals: it was easier to use, more accurate in identifying genuine threats, and less disruptive to normal activity. These outcomes reflect the strength of the iterative, user-centred design process that informed the project.
+User studies and statistical analysis confirmed that the improved system met the goals: it was easier to use, more accurate in identifying genuine threats, and less disruptive to normal activity. The user is able to continue what they are doing with the software running in the background ready to detect any potential threats from behind.
 
-Nevertheless, limitations remain. Performance was still affected by environmental lighting, and the use of a standard webcam restricted detection range. With more time or access to hardware like infrared cameras or dedicated eye trackers, further improvements in robustness and precision could be achieved.
+Limitations still remain within the system such as performance is affected by environmental lighting and the use of a standard webcam restricts the detection range. However, with more time or access to hardware like infrared cameras or dedicated eye trackers, further improvements in robustness and precision could be achieved.
 
-In conclusion, the system offers a promising software-based solution to shoulder surfing that respects user autonomy and blends security with usability — contributing to both the technical and HCI-driven understanding of privacy-preserving interfaces.
-
-Prototype 2 demonstrated a significant improvement in both perceived and actual performance, validating the decision to incorporate gaze tracking. It maintained system responsiveness while reducing false positives and increasing user trust.
-
+In summary, this project presents a practical and adaptable method for increasing on-screen privacy by using real-time gaze detection to produce responsive feedback to the user. This suggests the potential of gaze-aware systems to enhance privacy with compromising user experience like the projects identified in the past work section do. Subtle cues like screen dimming and sound alerts mean that users get the most out of the system without it becoming intrusive in the work that they do. Shoulder surfing may always be a potential threat within public spaces, but finding an appropriate way to mitigate it and improve security is important as mobile computing becomes more embedded in our daily lives.
 
 \newpage
 \printbibliography 
